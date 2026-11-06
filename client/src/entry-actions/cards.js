@@ -60,6 +60,14 @@ const updateCard = (id, data) => ({
   },
 });
 
+const toggleCardClosed = (id, isClosed) => ({
+  type: EntryActionTypes.CARD_CLOSED_TOGGLE,
+  payload: {
+    id,
+    isClosed,
+  },
+});
+
 const updateCurrentCard = (data) => ({
   type: EntryActionTypes.CURRENT_CARD_UPDATE,
   payload: {
@@ -215,6 +223,7 @@ export default {
   createCardInCurrentList,
   handleCardCreate,
   updateCard,
+  toggleCardClosed,
   updateCurrentCard,
   handleCardUpdate,
   moveCard,

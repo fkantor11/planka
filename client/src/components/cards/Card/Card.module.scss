@@ -39,6 +39,26 @@
     }
   }
 
+  .checkbox {
+    vertical-align: top;
+  }
+
+  .checkboxWrapper {
+    flex: 0 0 auto;
+    line-height: 1;
+    padding: 7px 0 0 8px;
+  }
+
+  .wrapperCheckable {
+    align-items: flex-start;
+    display: flex;
+
+    > .content {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+  }
+
   .contentCut {
     opacity: 0.5;
   }
@@ -61,6 +81,14 @@
 
       .actionsButton {
         opacity: 1;
+      }
+    }
+
+    &.wrapperClosed {
+      background: #e9ebee;
+
+      &:hover {
+        background: #e2e5e9;
       }
     }
   }

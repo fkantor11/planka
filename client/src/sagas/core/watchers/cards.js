@@ -33,6 +33,9 @@ export default function* cardsWatchers() {
     takeEvery(EntryActionTypes.CARD_UPDATE, ({ payload: { id, data } }) =>
       services.updateCard(id, data),
     ),
+    takeEvery(EntryActionTypes.CARD_CLOSED_TOGGLE, ({ payload: { id, isClosed } }) =>
+      services.toggleCardClosed(id, isClosed),
+    ),
     takeEvery(EntryActionTypes.CURRENT_CARD_UPDATE, ({ payload: { data } }) =>
       services.updateCurrentCard(data),
     ),

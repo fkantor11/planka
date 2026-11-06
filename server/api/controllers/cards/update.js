@@ -73,6 +73,10 @@
  *                 nullable: true
  *                 description: Whether the due date is completed
  *                 example: false
+ *               isClosed:
+ *                 type: boolean
+ *                 description: Whether the card is checked off as done (only for cards in active lists)
+ *                 example: true
  *               stopwatch:
  *                 type: object
  *                 required:
@@ -145,6 +149,9 @@ const Errors = {
   POSITION_MUST_BE_PRESENT: {
     positionMustBePresent: 'Position must be present',
   },
+  CARD_MUST_BE_IN_ACTIVE_LIST: {
+    cardMustBeInActiveList: 'Card must be in active list',
+  },
 };
 
 module.exports = {
@@ -188,6 +195,9 @@ module.exports = {
       type: 'boolean',
       allowNull: true,
     },
+    isClosed: {
+      type: 'boolean',
+    },
     stopwatch: {
       type: 'json',
       custom: isStopwatch,
@@ -220,6 +230,9 @@ module.exports = {
       responseType: 'unprocessableEntity',
     },
     positionMustBePresent: {
+      responseType: 'unprocessableEntity',
+    },
+    cardMustBeInActiveList: {
       responseType: 'unprocessableEntity',
     },
   },
@@ -255,6 +268,7 @@ module.exports = {
         'description',
         'dueDate',
         'isDueCompleted',
+        'isClosed',
         'stopwatch',
       );
     }
@@ -315,9 +329,18 @@ module.exports = {
       'description',
       'dueDate',
       'isDueCompleted',
+      'isClosed',
       'stopwatch',
       'isSubscribed',
     ]);
+
+    if (!_.isUndefined(values.isClosed)) {
+      const targetList = nextList || list;
+
+      if (targetList.type !== List.Types.ACTIVE) {
+        throw Errors.CARD_MUST_BE_IN_ACTIVE_LIST;
+      }
+    }
 
     card = await sails.helpers.cards.updateOne
       .with({

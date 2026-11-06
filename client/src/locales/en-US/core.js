@@ -172,6 +172,8 @@ export default {
       noTrustedDevices: 'No trusted devices.',
       openBoardActions: 'Open board actions',
       openCardActions: 'Open card actions',
+      markAsDone: 'Mark as done',
+      markAsNotDone: 'Mark as not done',
       openListActions: 'Open list actions',
       openNotifications: 'Open notifications',
       openProjectActions: 'Open project actions',

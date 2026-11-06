@@ -95,6 +95,37 @@ export const selectNextCardPosition = createSelector(
   },
 );
 
+// Where a card goes when it is checked off or unchecked: checked cards drop to the very bottom
+// of the list, unchecked cards return just above the first checked card.
+// Uses all cards in the list (not only filtered ones), so active filters don't affect the order.
+export const selectCardPositionForClosedState = createSelector(
+  orm,
+  (_, cardId) => cardId,
+  (_, __, isClosed) => isClosed,
+  ({ Card }, cardId, isClosed) => {
+    const cardModel = Card.withId(cardId);
+
+    if (!cardModel || !cardModel.list) {
+      return undefined;
+    }
+
+    const items = cardModel.list.getCardsQuerySet().toRefArray();
+
+    if (isClosed) {
+      return nextPosition(items, undefined, cardId);
+    }
+
+    const otherItems = items.filter((item) => item.id !== cardId);
+    const firstClosedIndex = otherItems.findIndex((item) => item.isClosed);
+
+    if (firstClosedIndex === -1) {
+      return undefined;
+    }
+
+    return nextPosition(otherItems, firstClosedIndex);
+  },
+);
+
 export const selectNextTaskListPosition = createSelector(
   orm,
   (_, cardId) => cardId,
@@ -213,6 +244,7 @@ export default {
   selectNextLabelPosition,
   selectNextListPosition,
   selectNextCardPosition,
+  selectCardPositionForClosedState,
   selectNextTaskListPosition,
   selectNextTaskPosition,
   selectNextCustomFieldGroupPositionInBoard,

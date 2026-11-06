@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { Button, Icon } from 'semantic-ui-react';
+import { Button, Checkbox, Icon } from 'semantic-ui-react';
 import { Tooltip } from '../../../lib/custom-ui';
 import { push } from '../../../lib/redux-router';
 import { closePopup, usePopup } from '../../../lib/popup';
@@ -17,7 +17,8 @@ import selectors from '../../../selectors';
 import { BoardShortcutsContext } from '../../../contexts';
 import Paths from '../../../constants/Paths';
 import ClipboardTypes from '../../../constants/ClipboardTypes';
-import { BoardMembershipRoles, CardTypes } from '../../../constants/Enums';
+import entryActions from '../../../entry-actions';
+import { BoardMembershipRoles, CardTypes, ListTypes } from '../../../constants/Enums';
 import ProjectContent from './ProjectContent';
 import StoryContent from './StoryContent';
 import InlineContent from './InlineContent';
@@ -56,6 +57,13 @@ const Card = React.memo(({ id, isInline }) => {
 
     const boardMembership = selectors.selectCurrentUserMembershipForCurrentBoard(state);
     return !!boardMembership && boardMembership.role === BoardMembershipRoles.EDITOR;
+  });
+
+  // Checkbox is offered only in regular (active) lists; closed, archive and trash lists keep
+  // their own rules for the closed state.
+  const isCheckable = useSelector((state) => {
+    const list = selectors.selectListById(state, card.listId);
+    return !!list && list.type === ListTypes.ACTIVE;
   });
 
   const dispatch = useDispatch();
@@ -100,6 +108,14 @@ const Card = React.memo(({ id, isInline }) => {
     actionsPopupRef.current.open();
   }, []);
 
+  const handleClosedToggleClick = useCallback((event) => {
+    event.stopPropagation();
+  }, []);
+
+  const handleClosedToggleChange = useCallback(() => {
+    dispatch(entryActions.toggleCardClosed(id, !card.isClosed));
+  }, [id, card.isClosed, dispatch]);
+
   const handleNameEdit = useCallback(() => {
     setIsEditNameOpened(true);
   }, []);
@@ -131,10 +147,33 @@ const Card = React.memo(({ id, isInline }) => {
     }
   }
 
+  const withCheckbox = !isInline && isCheckable;
+
   return (
     <div
-      className={classNames(styles.wrapper, isHighlightedAsRecent && styles.wrapperRecent, 'card')}
+      className={classNames(
+        styles.wrapper,
+        withCheckbox && styles.wrapperCheckable,
+        card.isClosed && styles.wrapperClosed,
+        isHighlightedAsRecent && styles.wrapperRecent,
+        'card',
+      )}
     >
+      {withCheckbox && (
+        // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+        <span
+          className={styles.checkboxWrapper}
+          title={card.isClosed ? t('common.markAsNotDone') : t('common.markAsDone')}
+          onClick={handleClosedToggleClick}
+        >
+          <Checkbox
+            checked={card.isClosed}
+            disabled={!card.isPersisted || !canUseActions}
+            className={styles.checkbox}
+            onChange={handleClosedToggleChange}
+          />
+        </span>
+      )}
       {card.isPersisted ? (
         <>
           {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events,

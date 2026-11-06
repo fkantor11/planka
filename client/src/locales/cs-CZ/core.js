@@ -185,6 +185,8 @@ export default {
       noTrustedDevices: 'Žádná důvěryhodná zařízení.',
       openBoardActions: 'Otevřít akce nástěnky',
       openCardActions: 'Otevřít akce karty',
+      markAsDone: 'Označit jako hotové',
+      markAsNotDone: 'Vrátit mezi nehotové',
       openListActions: 'Otevřít akce seznamu',
       openNotifications: 'Otevřít oznámení',
       openProjectActions: 'Otevřít akce projektu',

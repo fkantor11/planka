@@ -297,6 +297,17 @@ export function* updateCard(id, data) {
   yield put(actions.updateCard.success(card));
 }
 
+export function* toggleCardClosed(id, isClosed) {
+  const position = yield select(selectors.selectCardPositionForClosedState, id, isClosed);
+
+  yield call(updateCard, id, {
+    isClosed,
+    ...(position !== undefined && {
+      position,
+    }),
+  });
+}
+
 export function* updateCurrentCard(data) {
   const { cardId } = yield select(selectors.selectPath);
 
@@ -778,6 +789,7 @@ export default {
   createCardInCurrentList,
   handleCardCreate,
   updateCard,
+  toggleCardClosed,
   updateCurrentCard,
   handleCardUpdate,
   moveCard,
