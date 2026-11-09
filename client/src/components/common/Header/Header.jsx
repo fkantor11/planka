@@ -5,7 +5,7 @@
 
 import React, { useCallback } from 'react';
 import classNames from 'classnames';
-import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { Button, Icon, Menu } from 'semantic-ui-react';
@@ -15,7 +15,7 @@ import { usePopup } from '../../../lib/popup';
 import selectors from '../../../selectors';
 import entryActions from '../../../entry-actions';
 import Paths from '../../../constants/Paths';
-import { BoardMembershipRoles, BoardViews, UserRoles } from '../../../constants/Enums';
+import { UserRoles } from '../../../constants/Enums';
 import UserAvatar from '../../users/UserAvatar';
 import UserActionsStep from '../../users/UserActionsStep';
 import NotificationsStep from '../../notifications/NotificationsStep';
@@ -30,49 +30,24 @@ const POPUP_PROPS = {
 const Header = React.memo(() => {
   const user = useSelector(selectors.selectCurrentUser);
   const project = useSelector(selectors.selectCurrentProject);
-  const board = useSelector(selectors.selectCurrentBoard);
   const notificationIds = useSelector(selectors.selectNotificationIdsForCurrentUser);
   const isFavoritesEnabled = useSelector(selectors.selectIsFavoritesEnabled);
-  const isEditModeEnabled = useSelector(selectors.selectIsEditModeEnabled);
 
   const withFavoritesToggler = useSelector(
     // TODO: use selector instead?
     (state) => selectors.selectFavoriteProjectIdsForCurrentUser(state).length > 0,
   );
 
-  const { withEditModeToggler, canEditProject } = useSelector((state) => {
+  // SPECIAL1: no edit-mode lock, so managers (and admins in shared projects) can always open
+  // the project settings
+  const canEditProject = useSelector((state) => {
     if (!project) {
-      return {
-        withEditModeToggler: false,
-        canEditProject: false,
-      };
+      return false;
     }
 
     const isAdminInSharedProject = user.role === UserRoles.ADMIN && !project.ownerProjectManagerId;
-    const isManager = selectors.selectIsCurrentUserManagerForCurrentProject(state);
-
-    if (isAdminInSharedProject || isManager) {
-      return {
-        withEditModeToggler: true,
-        canEditProject: isEditModeEnabled,
-      };
-    }
-
-    if (!board) {
-      return {
-        withEditModeToggler: false,
-        canEditProject: false,
-      };
-    }
-
-    const boardMembership = selectors.selectCurrentUserMembershipForCurrentBoard(state);
-    const isEditor = !!boardMembership && boardMembership.role === BoardMembershipRoles.EDITOR;
-
-    return {
-      withEditModeToggler: board.view === BoardViews.KANBAN && isEditor,
-      canEditProject: false,
-    };
-  }, shallowEqual);
+    return isAdminInSharedProject || selectors.selectIsCurrentUserManagerForCurrentProject(state);
+  });
 
   const dispatch = useDispatch();
   const [t] = useTranslation();
@@ -80,10 +55,6 @@ const Header = React.memo(() => {
   const handleToggleFavoritesClick = useCallback(() => {
     dispatch(entryActions.toggleFavorites(!isFavoritesEnabled));
   }, [isFavoritesEnabled, dispatch]);
-
-  const handleToggleEditModeClick = useCallback(() => {
-    dispatch(entryActions.toggleEditMode(!isEditModeEnabled));
-  }, [isEditModeEnabled, dispatch]);
 
   const handleProjectSettingsClick = useCallback(() => {
     if (!canEditProject) {
@@ -140,22 +111,6 @@ const Header = React.memo(() => {
                   fitted
                   name={isFavoritesEnabled ? 'star' : 'star outline'}
                   className={classNames(isFavoritesEnabled && styles.itemIconEnabled)}
-                />
-              </Menu.Item>
-            </Tooltip>
-          )}
-          {withEditModeToggler && (
-            <Tooltip
-              content={t(isEditModeEnabled ? 'action.disableEditMode' : 'action.enableEditMode')}
-            >
-              <Menu.Item
-                className={classNames(styles.item, styles.itemHoverable)}
-                onClick={handleToggleEditModeClick}
-              >
-                <Icon
-                  fitted
-                  name={isEditModeEnabled ? 'unlock' : 'lock'}
-                  className={classNames(isEditModeEnabled && styles.itemIconEnabled)}
                 />
               </Menu.Item>
             </Tooltip>

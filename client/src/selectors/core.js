@@ -9,7 +9,8 @@ export const selectIsLogouting = ({ core: { isLogouting } }) => isLogouting;
 
 export const selectIsFavoritesEnabled = ({ core: { isFavoritesEnabled } }) => isFavoritesEnabled;
 
-export const selectIsEditModeEnabled = ({ core: { isEditModeEnabled } }) => isEditModeEnabled;
+// SPECIAL1: no edit-mode lock; editing is always on and only board permissions decide who can edit
+export const selectIsEditModeEnabled = () => true;
 
 export const selectFilterFocusNonce = ({ core: { filterFocusNonce } }) => filterFocusNonce;
 
