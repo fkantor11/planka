@@ -19,6 +19,9 @@ export default {
       password: 'Heslo',
       poweredByPlanka: 'Poháněno technologií <1>PLANKA</1>',
       serverConnectionFailed: 'Připojení k serveru selhalo',
+      special1LoginHeadline: 'Všechny úkoly týmu na jednom místě',
+      special1LoginSubtitle:
+        'Obchod, Delivery, Finance i Marketing – přehled, kdo co dělá a co je hotové.',
       totpSessionExpired: 'Platnost relace TOTP vypršela. Přihlaste se prosím znovu.',
       trustThisBrowser: 'Důvěřovat tomuto prohlížeči po dobu 30 dnů',
       twoFactorRequired_title: 'Je vyžadováno dvoufaktorové ověření',

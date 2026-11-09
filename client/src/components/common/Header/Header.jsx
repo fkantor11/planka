@@ -20,6 +20,7 @@ import UserAvatar from '../../users/UserAvatar';
 import UserActionsStep from '../../users/UserActionsStep';
 import NotificationsStep from '../../notifications/NotificationsStep';
 
+import logo from '../../../assets/special1/special1-logo-white.svg';
 import styles from './Header.module.scss';
 
 const POPUP_PROPS = {
@@ -99,7 +100,7 @@ const Header = React.memo(() => {
     <div className={styles.wrapper}>
       {!project && (
         <Link to={Paths.ROOT} className={classNames(styles.logo, styles.title)}>
-          PLANKA
+          <img src={logo} alt="SPECIAL1" className={styles.logoImage} />
         </Link>
       )}
       <Menu inverted size="large" className={styles.menu}>

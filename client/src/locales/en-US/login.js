@@ -18,6 +18,9 @@ export default {
       password: 'Password',
       poweredByPlanka: 'Powered by <1>PLANKA</1>',
       serverConnectionFailed: 'Server connection failed',
+      special1LoginHeadline: "All of the team's tasks in one place",
+      special1LoginSubtitle:
+        'Sales, Delivery, Finance and Marketing – see who is doing what and what is done.',
       totpSessionExpired: 'TOTP session expired. Please log in again.',
       trustThisBrowser: 'Trust this browser for 30 days',
       twoFactorRequired_title: 'Two-Factor Authentication Required',

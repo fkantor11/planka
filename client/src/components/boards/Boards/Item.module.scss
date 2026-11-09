@@ -88,3 +88,36 @@
     flex: 0 0 auto;
   }
 }
+
+/* SPECIAL1: light workspace (design A), used when the project has no background */
+:global(#app.s1-light) {
+  .editButton {
+    color: #182f66;
+
+    &:hover {
+      background: rgba(24, 47, 102, 0.08);
+    }
+  }
+
+  .name {
+    color: #5b6478;
+  }
+
+  .tab:hover {
+    background: rgba(24, 47, 102, 0.06);
+
+    .name {
+      color: #182f66;
+    }
+  }
+
+  .tabActive,
+  .tabActive:hover {
+    background: #fff;
+    box-shadow: inset 0 0 0 1px #d1d5e0;
+
+    .name {
+      color: #182f66;
+    }
+  }
+}

@@ -41,7 +41,7 @@
 
   .itemHoverable:hover {
     cursor: pointer;
-    background: rgba(0, 0, 0, 0.32);
+    background: rgba(255, 255, 255, 0.1);
   }
 
   .itemIconEnabled {
@@ -49,16 +49,23 @@
   }
 
   .logo {
+    align-items: center;
     color: #fff;
+    display: flex;
     flex: 0 0 auto;
-    letter-spacing: 3.5px;
-    line-height: 50px;
-    padding: 0 16px;
-    text-transform: uppercase;
+    height: 50px;
+    padding: 0 20px;
 
     &:before {
       background: none;
     }
+  }
+
+  /* SPECIAL1 */
+  .logoImage {
+    display: block;
+    height: 28px;
+    width: auto;
   }
 
   .menu {
@@ -74,7 +81,7 @@
   }
 
   .notification {
-    background: #eb5a46;
+    background: #c31616;
     border-radius: 8px;
     color: #fff;
     display: inline-block;
@@ -103,7 +110,7 @@
   }
 
   .wrapper {
-    background: rgba(0, 0, 0, 0.24);
+    background: #182f66;
     display: flex;
     flex: 0 0 auto;
   }

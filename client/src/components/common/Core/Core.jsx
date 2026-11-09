@@ -58,6 +58,17 @@ const Core = React.memo(() => {
     document.title = titleParts.length === 0 ? defaultTitleRef.current : titleParts.join(' | ');
   }, [project, board]);
 
+  // SPECIAL1: the light workspace is used unless the project brings its own background
+  const isLightWorkspace = !project || !project.backgroundType;
+
+  useEffect(() => {
+    const appElement = document.getElementById('app');
+
+    if (appElement) {
+      appElement.classList.toggle('s1-light', isLightWorkspace);
+    }
+  }, [isLightWorkspace]);
+
   let modalNode = null;
   if (modal) {
     switch (modal.type) {

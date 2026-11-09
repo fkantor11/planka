@@ -55,3 +55,11 @@
     }
   }
 }
+
+/* SPECIAL1: light workspace (design A), used when the project has no background */
+:global(#app.s1-light) {
+  .contextTitle {
+    background: rgba(24, 47, 102, 0.08);
+    color: #182f66;
+  }
+}

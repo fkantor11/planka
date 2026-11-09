@@ -30,3 +30,20 @@
     }
   }
 }
+
+/* SPECIAL1: light workspace (design A), used when the project has no background */
+:global(#app.s1-light) {
+  .searchInactive {
+    color: #5b6478;
+
+    input {
+      background: #fff;
+      box-shadow: inset 0 0 0 1px #d1d5e0;
+      color: #0d0d0d !important;
+
+      &::placeholder {
+        color: #5b6478;
+      }
+    }
+  }
+}

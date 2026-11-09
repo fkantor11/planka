@@ -53,3 +53,10 @@
     height: 90px;
   }
 }
+
+/* SPECIAL1: light workspace (design A), used when the project has no background */
+:global(#app.s1-light) {
+  .wrapper {
+    background: #e7e8ed;
+  }
+}

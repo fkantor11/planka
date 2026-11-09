@@ -72,3 +72,17 @@
     }
   }
 }
+
+/* SPECIAL1: light workspace (design A), used when the project has no background */
+:global(#app.s1-light) {
+  .addCardButton {
+    background: transparent;
+    box-shadow: inset 0 0 0 1px #a3acc2;
+    color: #22428f;
+    fill: #22428f;
+
+    &:hover {
+      background: rgba(24, 47, 102, 0.06);
+    }
+  }
+}

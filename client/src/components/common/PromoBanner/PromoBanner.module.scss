@@ -58,3 +58,26 @@
     color: rgba(255, 255, 255, 0.9);
   }
 }
+
+/* SPECIAL1: light workspace (design A), used when the project has no background */
+:global(#app.s1-light) {
+  .wrapper {
+    background: #e7e8ed;
+  }
+
+  .textLink {
+    color: #182f66;
+
+    &:hover {
+      color: #22428f;
+    }
+  }
+
+  .closeButton {
+    color: #5b6478;
+
+    &:hover {
+      color: #182f66;
+    }
+  }
+}

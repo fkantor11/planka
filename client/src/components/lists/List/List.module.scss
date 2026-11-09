@@ -9,23 +9,23 @@
   }
 
   .addCardButton {
-    background: #dfe3e6;
+    background: #e7e8ed;
     border: none;
-    color: #6b808c;
+    color: #22428f;
     cursor: pointer;
     display: block;
-    fill: #6b808c;
+    fill: #22428f;
     flex: 1;
-    font-weight: normal;
+    font-weight: 600;
     height: 36px;
     outline: none;
     padding: 8px;
     text-align: left;
 
     &:hover {
-      background: #c3cbd0;
-      color: #17394d;
-      fill: #17394d;
+      background: #dcdee6;
+      color: #182f66;
+      fill: #182f66;
     }
 
     &.paste {
@@ -157,8 +157,10 @@
   }
 
   .headerName {
-    color: #17394d;
-    font-weight: bold;
+    color: #182f66;
+    font-family: "Source Sans 3", "Inter", sans-serif;
+    font-size: 16px;
+    font-weight: 700;
     line-height: 20px;
     max-height: 256px;
     outline: none;
@@ -179,8 +181,8 @@
   }
 
   .outerWrapper {
-    background: #dfe3e6;
-    border-radius: 3px;
+    background: #e7e8ed;
+    border-radius: 12px;
     display: flex;
     flex-direction: column;
     max-height: calc(100vh - 198px);

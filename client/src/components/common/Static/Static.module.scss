@@ -76,3 +76,10 @@
     margin-top: calc(206px + var(--promo-banner-height, 0px));
   }
 }
+
+/* SPECIAL1: light workspace (design A), used when the project has no background */
+:global(#app.s1-light) {
+  .message {
+    color: #182f66;
+  }
+}

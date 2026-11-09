@@ -60,3 +60,18 @@
     overflow: hidden;
   }
 }
+
+/* SPECIAL1: light workspace (design A), used when the project has no background */
+:global(#app.s1-light) {
+  .addButton {
+    color: #182f66;
+
+    &:hover {
+      background: rgba(24, 47, 102, 0.08);
+    }
+  }
+
+  .wrapper {
+    border-bottom-color: #d1d5e0;
+  }
+}

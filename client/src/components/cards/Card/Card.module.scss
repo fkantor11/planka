@@ -41,6 +41,20 @@
 
   .checkbox {
     vertical-align: top;
+
+    :global(label)::before {
+      border: 2px solid #a3acc2 !important;
+      border-radius: 5px !important;
+    }
+
+    &:global(.checked) :global(label)::before {
+      background: #182f66 !important;
+      border-color: #182f66 !important;
+    }
+
+    &:global(.checked) :global(label)::after {
+      color: #fff !important;
+    }
   }
 
   .checkboxWrapper {
@@ -70,8 +84,8 @@
 
   .wrapper {
     background: #fff;
-    border-radius: 3px;
-    box-shadow: 0 1px 0 #ccc;
+    border-radius: 10px;
+    box-shadow: 0 1px 2px rgba(24, 47, 102, 0.12);
     overflow: hidden;
     position: relative;
 
@@ -85,10 +99,11 @@
     }
 
     &.wrapperClosed {
-      background: #e9ebee;
+      background: #f2f3f6;
+      box-shadow: none;
 
       &:hover {
-        background: #e2e5e9;
+        background: #eaebf0;
       }
     }
   }

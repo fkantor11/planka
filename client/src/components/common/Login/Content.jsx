@@ -21,7 +21,8 @@ import AccessTokenSteps from '../../../constants/AccessTokenSteps';
 import TermsModal from './TermsModal';
 import TotpChallengeModal from './TotpChallengeModal';
 
-import logo from '../../../assets/images/logo.png';
+import logo from '../../../assets/special1/special1-logo.svg';
+import logoWhite from '../../../assets/special1/special1-logo-white.svg';
 
 import styles from './Content.module.scss';
 
@@ -187,14 +188,16 @@ const Content = React.memo(() => {
           <div className={styles.login}>
             <div className={styles.form}>
               <div className={styles.logoWrapper}>
-                <img src={logo} alt="" className={styles.logo} />
+                <img src={logo} alt="SPECIAL1" className={styles.logo} />
               </div>
-              <Header
-                as="h1"
-                textAlign="center"
-                content={bootstrap.instanceName || 'PLANKA'}
-                className={styles.formTitle}
-              />
+              {bootstrap.instanceName && (
+                <Header
+                  as="h1"
+                  textAlign="center"
+                  content={bootstrap.instanceName}
+                  className={styles.formTitle}
+                />
+              )}
               <Header
                 as="h2"
                 textAlign="center"
@@ -268,7 +271,13 @@ const Content = React.memo(() => {
           only="computer"
           className={classNames(styles.gridItem, styles.cover)}
         >
-          <div className={styles.coverOverlay} />
+          <div className={styles.coverContent}>
+            <img src={logoWhite} alt="" className={styles.coverLogo} />
+            <div className={styles.coverText}>
+              <h2 className={styles.coverTitle}>{t('common.special1LoginHeadline')}</h2>
+              <p className={styles.coverSubtitle}>{t('common.special1LoginSubtitle')}</p>
+            </div>
+          </div>
         </Grid.Column>
       </Grid>
       {step === AccessTokenSteps.ACCEPT_TERMS && <TermsModal />}
