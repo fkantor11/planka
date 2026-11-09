@@ -23,7 +23,8 @@ import '@gravity-ui/uikit/styles/styles.css';
 import '../../lib/custom-ui/styles.css';
 
 import '../../styles.module.scss';
-import '../../special1.module.scss';
+// SPECIAL1 theme: plain global stylesheet, so the production build cannot drop it
+import '../../special1.scss';
 
 function Root({ store, history }) {
   return (

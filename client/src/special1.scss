@@ -48,85 +48,83 @@
     U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
-:global {
-  /* Body text in Inter everywhere; icons keep their own icon font */
-  #app,
-  #app .ui:not(.icon),
-  #app input,
-  #app textarea,
-  #app select,
-  #app button,
-  .ui.popup,
-  .ui.modal,
-  .ui.modal .ui:not(.icon),
-  .ui.modal input,
-  .ui.modal textarea {
-    font-family: "Inter", "Helvetica Neue", Arial, Helvetica, sans-serif !important;
+/* Body text in Inter everywhere; icons keep their own icon font */
+#app,
+#app .ui:not(.icon),
+#app input,
+#app textarea,
+#app select,
+#app button,
+.ui.popup,
+.ui.modal,
+.ui.modal .ui:not(.icon),
+.ui.modal input,
+.ui.modal textarea {
+  font-family: "Inter", "Helvetica Neue", Arial, Helvetica, sans-serif !important;
+}
+
+/* Headings in Source Sans 3, as on special1.cz */
+#app h1,
+#app h2,
+#app h3,
+#app h4,
+#app .ui.header,
+.ui.modal h1,
+.ui.modal h2,
+.ui.modal h3,
+.ui.modal .ui.header {
+  font-family: "Source Sans 3", "Inter", "Helvetica Neue", Arial, sans-serif !important;
+}
+
+#app {
+  --g-font-family-sans: "Inter", "Helvetica Neue", Arial, Helvetica, sans-serif !important;
+  --yfm-font-family-sans: "Inter", "Helvetica Neue", Arial, Helvetica, sans-serif !important;
+
+  .react-datepicker {
+    font-family: "Inter", "Helvetica Neue", Arial, Helvetica, sans-serif;
+  }
+}
+
+/* Primary buttons in SPECIAL1 navy */
+.ui.primary.button,
+.ui.primary.buttons .button {
+  background-color: #182f66 !important;
+  color: #fff !important;
+
+  &:hover,
+  &:focus {
+    background-color: #22428f !important;
   }
 
-  /* Headings in Source Sans 3, as on special1.cz */
-  #app h1,
-  #app h2,
-  #app h3,
-  #app h4,
-  #app .ui.header,
-  .ui.modal h1,
-  .ui.modal h2,
-  .ui.modal h3,
-  .ui.modal .ui.header {
-    font-family: "Source Sans 3", "Inter", "Helvetica Neue", Arial, sans-serif !important;
+  &:active {
+    background-color: #13254f !important;
   }
+}
 
-  #app {
-    --g-font-family-sans: "Inter", "Helvetica Neue", Arial, Helvetica, sans-serif !important;
-    --yfm-font-family-sans: "Inter", "Helvetica Neue", Arial, Helvetica, sans-serif !important;
+/* Confirming buttons (create board, save...) in SPECIAL1 navy instead of green */
+.ui.positive.button:not(.basic) {
+  background-color: #182f66 !important;
+  color: #fff !important;
 
-    .react-datepicker {
-      font-family: "Inter", "Helvetica Neue", Arial, Helvetica, sans-serif;
-    }
+  &:hover,
+  &:focus {
+    background-color: #22428f !important;
   }
+}
 
-  /* Primary buttons in SPECIAL1 navy */
-  .ui.primary.button,
-  .ui.primary.buttons .button {
-    background-color: #182f66 !important;
-    color: #fff !important;
+.ui.basic.positive.button {
+  box-shadow: inset 0 0 0 1px #182f66 !important;
+  color: #182f66 !important;
 
-    &:hover,
-    &:focus {
-      background-color: #22428f !important;
-    }
-
-    &:active {
-      background-color: #13254f !important;
-    }
+  &:hover,
+  &:focus {
+    background: rgba(24, 47, 102, 0.06) !important;
+    box-shadow: inset 0 0 0 1px #22428f !important;
+    color: #22428f !important;
   }
+}
 
-  /* Confirming buttons (create board, save...) in SPECIAL1 navy instead of green */
-  .ui.positive.button:not(.basic) {
-    background-color: #182f66 !important;
-    color: #fff !important;
-
-    &:hover,
-    &:focus {
-      background-color: #22428f !important;
-    }
-  }
-
-  .ui.basic.positive.button {
-    box-shadow: inset 0 0 0 1px #182f66 !important;
-    color: #182f66 !important;
-
-    &:hover,
-    &:focus {
-      background: rgba(24, 47, 102, 0.06) !important;
-      box-shadow: inset 0 0 0 1px #22428f !important;
-      color: #22428f !important;
-    }
-  }
-
-  /* Light workspace wherever a project has no background image or gradient of its own */
-  #app.s1-light {
-    background: #eff0f5;
-  }
+/* Light workspace wherever a project has no background image or gradient of its own */
+#app.s1-light {
+  background: #eff0f5;
 }
