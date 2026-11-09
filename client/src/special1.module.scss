@@ -102,6 +102,29 @@
     }
   }
 
+  /* Confirming buttons (create board, save...) in SPECIAL1 navy instead of green */
+  .ui.positive.button:not(.basic) {
+    background-color: #182f66 !important;
+    color: #fff !important;
+
+    &:hover,
+    &:focus {
+      background-color: #22428f !important;
+    }
+  }
+
+  .ui.basic.positive.button {
+    box-shadow: inset 0 0 0 1px #182f66 !important;
+    color: #182f66 !important;
+
+    &:hover,
+    &:focus {
+      background: rgba(24, 47, 102, 0.06) !important;
+      box-shadow: inset 0 0 0 1px #22428f !important;
+      color: #22428f !important;
+    }
+  }
+
   /* Light workspace wherever a project has no background image or gradient of its own */
   #app.s1-light {
     background: #eff0f5;
