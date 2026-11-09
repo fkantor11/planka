@@ -28,6 +28,9 @@ export default function* projectsWatchers() {
     takeEvery(EntryActionTypes.PROJECT_UPDATE, ({ payload: { id, data } }) =>
       services.updateProject(id, data),
     ),
+    takeEvery(EntryActionTypes.PROJECT_MOVE_TO_SECTION, ({ payload: { id, section, index } }) =>
+      services.moveProjectToSection(id, section, index),
+    ),
     takeEvery(EntryActionTypes.CURRENT_PROJECT_UPDATE, ({ payload: { data } }) =>
       services.updateCurrentProject(data),
     ),

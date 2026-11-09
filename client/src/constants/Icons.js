@@ -12,6 +12,7 @@ import {
   ListTypes,
   ProjectGroups,
   ProjectOrders,
+  ProjectSections,
   ProjectTypes,
   UserRoles,
 } from './Enums';
@@ -38,6 +39,16 @@ export const ProjectGroupIcons = {
   [ProjectGroups.TEAM]: 'group',
   [ProjectGroups.SHARED_WITH_ME]: 'location arrow',
   [ProjectGroups.OTHERS]: 'user secret',
+};
+
+// SPECIAL1
+export const ProjectSectionIcons = {
+  [ProjectSections.SALES]: 'handshake outline',
+  [ProjectSections.DELIVERY]: 'truck',
+  [ProjectSections.FINANCE]: 'money bill alternate outline',
+  [ProjectSections.MARKETING]: 'bullhorn',
+  [ProjectSections.EVERYONE]: 'users',
+  [ProjectSections.UNSORTED]: 'inbox',
 };
 
 export const ProjectTypeIcons = {

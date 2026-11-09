@@ -13,7 +13,8 @@ import selectors from '../../../selectors';
 import actions from '../../../actions';
 import api from '../../../api';
 import mergeRecords from '../../../utils/merge-records';
-import { UserRoles } from '../../../constants/Enums';
+import { ProjectSections, UserRoles } from '../../../constants/Enums';
+import Config from '../../../constants/Config';
 
 export function* searchProjects(value) {
   yield put(actions.searchProjects(value));
@@ -119,6 +120,41 @@ export function* updateProject(id, data) {
   }
 
   yield put(actions.updateProject.success(project));
+}
+
+// SPECIAL1: places a project at `index` in a section and renumbers that section, so the order is
+// stored even for projects that never had a position (only changed projects are sent)
+export function* moveProjectToSection(id, section, index) {
+  const projectIdsBySection = yield select(selectors.selectProjectIdsBySectionForCurrentUser, true);
+  const project = yield select(selectors.selectProjectById, id);
+
+  if (!projectIdsBySection || !project) {
+    return;
+  }
+
+  const ids = (projectIdsBySection[section] || []).filter((projectId) => projectId !== id);
+  ids.splice(Math.min(Math.max(index, 0), ids.length), 0, id);
+
+  const nextSection = section === ProjectSections.UNSORTED ? null : section;
+
+  for (let i = 0; i < ids.length; i += 1) {
+    const projectId = ids[i];
+    const position = Config.POSITION_GAP * (i + 1);
+    const projectToUpdate =
+      projectId === id ? project : yield select(selectors.selectProjectById, projectId);
+
+    const data = {};
+    if (projectToUpdate.position !== position) {
+      data.position = position;
+    }
+    if (projectId === id && (projectToUpdate.section || null) !== nextSection) {
+      data.section = nextSection;
+    }
+
+    if (Object.keys(data).length > 0) {
+      yield call(updateProject, projectId, data);
+    }
+  }
 }
 
 export function* updateCurrentProject(data) {
@@ -304,6 +340,7 @@ export default {
   createProject,
   handleProjectCreate,
   updateProject,
+  moveProjectToSection,
   updateCurrentProject,
   handleProjectUpdate,
   deleteProject,

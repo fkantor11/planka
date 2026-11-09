@@ -9,65 +9,77 @@ import { useDispatch, useSelector } from 'react-redux';
 import selectors from '../../../selectors';
 import entryActions from '../../../entry-actions';
 import { isUserAdminOrProjectOwner } from '../../../utils/record-helpers';
-import { ProjectGroups, ProjectTypes } from '../../../constants/Enums';
-import { ProjectGroupIcons } from '../../../constants/Icons';
+import { ProjectOrders, ProjectSections, ProjectTypes, UserRoles } from '../../../constants/Enums';
+import { ProjectSectionIcons } from '../../../constants/Icons';
 import Projects from './Projects';
 
-const TITLE_BY_GROUP = {
-  [ProjectGroups.MY_OWN]: 'common.myOwn',
-  [ProjectGroups.TEAM]: 'common.team',
-  [ProjectGroups.SHARED_WITH_ME]: 'common.sharedWithMe',
-  [ProjectGroups.OTHERS]: 'common.others',
-};
-
-const DEFAULT_TYPE_BY_GROUP = {
-  [ProjectGroups.MY_OWN]: ProjectTypes.PRIVATE,
-  [ProjectGroups.TEAM]: ProjectTypes.SHARED,
-};
+// SPECIAL1: the grouped home view shows company-wide sections instead of ownership groups.
+// Admins arrange projects by dragging them within and between sections.
+const SECTIONS = [
+  ProjectSections.SALES,
+  ProjectSections.DELIVERY,
+  ProjectSections.FINANCE,
+  ProjectSections.MARKETING,
+  ProjectSections.EVERYONE,
+  ProjectSections.UNSORTED,
+];
 
 const GroupedProjectsView = React.memo(() => {
-  const projectIdsByGroup = useSelector(selectors.selectFilteredProjctIdsByGroupForCurrentUser);
+  const projectIdsBySection = useSelector(selectors.selectProjectIdsBySectionForCurrentUser);
+  const projectsSearch = useSelector(selectors.selectProjectsSearch);
+  const projectsOrder = useSelector(selectors.selectProjectsOrder);
 
-  const canAdd = useSelector((state) => {
-    const user = selectors.selectCurrentUser(state);
-    return isUserAdminOrProjectOwner(user);
-  });
+  const canAdd = useSelector((state) =>
+    isUserAdminOrProjectOwner(selectors.selectCurrentUser(state)),
+  );
+
+  const isAdmin = useSelector(
+    (state) => selectors.selectCurrentUser(state).role === UserRoles.ADMIN,
+  );
+
+  // Dragging only makes sense while the arranged order is shown in full
+  const canArrange = isAdmin && !projectsSearch && projectsOrder === ProjectOrders.BY_DEFAULT;
 
   const dispatch = useDispatch();
 
-  const handleAdd = useCallback(
-    (defaultType) => {
-      dispatch(entryActions.openAddProjectModal(defaultType));
+  const handleAdd = useCallback(() => {
+    dispatch(entryActions.openAddProjectModal(ProjectTypes.SHARED));
+  }, [dispatch]);
+
+  const handleMove = useCallback(
+    (id, section, index) => {
+      dispatch(entryActions.moveProjectToSection(id, section, index));
     },
     [dispatch],
   );
 
+  if (!projectIdsBySection) {
+    return null;
+  }
+
   return (
     <>
-      {[ProjectGroups.MY_OWN, ProjectGroups.TEAM].map(
-        (group) =>
-          (projectIdsByGroup[group].length > 0 || canAdd) && (
-            <Projects
-              key={group}
-              ids={projectIdsByGroup[group]}
-              title={TITLE_BY_GROUP[group]}
-              titleIcon={ProjectGroupIcons[group]}
-              onAdd={() => handleAdd(DEFAULT_TYPE_BY_GROUP[group])}
-            />
-          ),
-      )}
-      {[ProjectGroups.SHARED_WITH_ME, ProjectGroups.OTHERS].map(
-        (group) =>
-          projectIdsByGroup[group].length > 0 && (
-            <Projects
-              withTypeIndicator
-              key={group}
-              ids={projectIdsByGroup[group]}
-              title={TITLE_BY_GROUP[group]}
-              titleIcon={ProjectGroupIcons[group]}
-            />
-          ),
-      )}
+      {SECTIONS.map((section) => {
+        const ids = projectIdsBySection[section];
+        const isUnsorted = section === ProjectSections.UNSORTED;
+
+        if (ids.length === 0 && !canArrange && !(isUnsorted && canAdd)) {
+          return null;
+        }
+
+        return (
+          <Projects
+            key={section}
+            ids={ids}
+            title={`common.projectSection_${section}`}
+            titleIcon={ProjectSectionIcons[section]}
+            section={section}
+            isSortable={canArrange}
+            onMove={handleMove}
+            onAdd={isUnsorted ? handleAdd : undefined}
+          />
+        );
+      })}
     </>
   );
 });

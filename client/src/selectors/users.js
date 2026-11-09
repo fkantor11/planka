@@ -15,7 +15,12 @@ import {
 import { isLocalId } from '../utils/local-id';
 import { isUserAdminOrProjectOwner } from '../utils/record-helpers';
 import { STATIC_USER_BY_ID } from '../constants/StaticUsers';
-import { BoardMembershipRoles, ProjectGroups, ProjectOrders } from '../constants/Enums';
+import {
+  BoardMembershipRoles,
+  ProjectGroups,
+  ProjectOrders,
+  ProjectSections,
+} from '../constants/Enums';
 
 const ORDER_BY_ARGS_BY_PROJECTS_ORDER = {
   [ProjectOrders.ALPHABETICALLY]: [['name', 'id.length', 'id']],
@@ -163,6 +168,62 @@ export const selectFilteredProjctIdsByGroupForCurrentUser = createSelector(
         ),
         [ProjectGroups.OTHERS]: adminProjectModels.map((projectModel) => projectModel.id),
       },
+    );
+  },
+);
+
+// SPECIAL1: project ids grouped by company-wide section. By default a section keeps the order an
+// admin arranged (projects never arranged come last, oldest first); the other orders still apply.
+// With `isSearchIgnored` the search filter is skipped (used when renumbering a section).
+const ORDER_BY_ARGS_BY_SECTION_POSITION = [
+  [
+    (projectModel) =>
+      projectModel.position === null || projectModel.position === undefined ? 1 : 0,
+    'position',
+    'id.length',
+    'id',
+  ],
+];
+
+export const selectProjectIdsBySectionForCurrentUser = createSelector(
+  orm,
+  (state) => selectCurrentUserId(state),
+  (state, isSearchIgnored) => (isSearchIgnored ? '' : selectProjectsSearch(state)),
+  (state) => selectIsHiddenProjectsVisible(state),
+  (state) => selectProjectsOrder(state),
+  ({ User }, id, projectsSearch, isHiddenProjectsVisible, projectsOrder) => {
+    if (!id) {
+      return id;
+    }
+
+    const userModel = User.withId(id);
+
+    if (!userModel) {
+      return userModel;
+    }
+
+    const projectModels = userModel.getFilteredProjectsModelArray(
+      projectsSearch,
+      isHiddenProjectsVisible,
+      ORDER_BY_ARGS_BY_PROJECTS_ORDER[projectsOrder] || ORDER_BY_ARGS_BY_SECTION_POSITION,
+    );
+
+    return projectModels.reduce(
+      (result, projectModel) => {
+        const section = result[projectModel.section]
+          ? projectModel.section
+          : ProjectSections.UNSORTED;
+
+        result[section].push(projectModel.id);
+        return result;
+      },
+      Object.values(ProjectSections).reduce(
+        (result, section) => ({
+          ...result,
+          [section]: [],
+        }),
+        {},
+      ),
     );
   },
 );
@@ -353,6 +414,7 @@ export default {
   selectProjectIdsForCurrentUser,
   selectFilteredProjectIdsForCurrentUser,
   selectFilteredProjctIdsByGroupForCurrentUser,
+  selectProjectIdsBySectionForCurrentUser,
   selectFavoriteProjectIdsForCurrentUser,
   selectProjectsToBoardsWithEditorRightsForCurrentUser,
   selectProjectsToListsWithEditorRightsForCurrentUser,

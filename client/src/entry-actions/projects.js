@@ -48,6 +48,15 @@ const updateProject = (id, data) => ({
   },
 });
 
+const moveProjectToSection = (id, section, index) => ({
+  type: EntryActionTypes.PROJECT_MOVE_TO_SECTION,
+  payload: {
+    id,
+    section,
+    index,
+  },
+});
+
 const updateCurrentProject = (data) => ({
   type: EntryActionTypes.CURRENT_PROJECT_UPDATE,
   payload: {
@@ -81,6 +90,7 @@ export default {
   createProject,
   handleProjectCreate,
   updateProject,
+  moveProjectToSection,
   updateCurrentProject,
   handleProjectUpdate,
   deleteCurrentProject,

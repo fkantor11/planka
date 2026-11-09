@@ -19,6 +19,8 @@ export default class extends BaseModel {
     backgroundType: attr(),
     backgroundGradient: attr(),
     isHidden: attr(),
+    section: attr(),
+    position: attr(),
     isFavorite: attr({
       getDefault: () => false,
     }),

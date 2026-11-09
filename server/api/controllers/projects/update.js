@@ -68,6 +68,17 @@
  *                 type: boolean
  *                 description: Whether the project is marked as favorite by the current user
  *                 example: true
+ *               section:
+ *                 type: string
+ *                 enum: [sales, delivery, finance, marketing, everyone]
+ *                 nullable: true
+ *                 description: Company-wide section of the project (admins only)
+ *                 example: sales
+ *               position:
+ *                 type: number
+ *                 nullable: true
+ *                 description: Order of the project within its section (admins only)
+ *                 example: 65536
  *     responses:
  *       200:
  *         description: Project updated successfully
@@ -164,6 +175,16 @@ module.exports = {
     isFavorite: {
       type: 'boolean',
     },
+    section: {
+      type: 'string',
+      isIn: Object.values(Project.Sections),
+      allowNull: true,
+    },
+    position: {
+      type: 'number',
+      min: 0,
+      allowNull: true,
+    },
   },
 
   exits: {
@@ -220,6 +241,11 @@ module.exports = {
       availableInputKeys.push('ownerProjectManagerId', 'isHidden');
     } else if (projectManager) {
       availableInputKeys.push('isHidden');
+    }
+
+    // SPECIAL1: sections and their order are shared by everyone, so only admins arrange them
+    if (currentUser.role === User.Roles.ADMIN) {
+      availableInputKeys.push('section', 'position');
     }
 
     if (projectManager) {
@@ -287,6 +313,8 @@ module.exports = {
       'backgroundGradient',
       'isHidden',
       'isFavorite',
+      'section',
+      'position',
     ]);
 
     project = await sails.helpers.projects.updateOne

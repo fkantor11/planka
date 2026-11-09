@@ -112,4 +112,55 @@
   .wrapperWithoutTitle {
     margin-top: 14px;
   }
+
+  /* SPECIAL1: dragging project tiles between sections */
+  .wrapperSortable {
+    border-radius: 8px;
+    transition: background 0.15s ease;
+  }
+
+  .wrapperDropTarget {
+    background: rgba(24, 47, 102, 0.06);
+  }
+
+  .columnDraggable {
+    cursor: grab;
+    position: relative;
+  }
+
+  .columnDropBefore::before,
+  .columnDropAfter::after {
+    background: #22428f;
+    border-radius: 2px;
+    bottom: 14px;
+    content: "";
+    position: absolute;
+    top: 14px;
+    width: 4px;
+  }
+
+  .columnDropBefore::before {
+    left: 5px;
+  }
+
+  .columnDropAfter::after {
+    right: 5px;
+  }
+
+  .emptySection {
+    align-items: center;
+    border: 2px dashed rgba(163, 172, 194, 0.9);
+    border-radius: 8px;
+    box-shadow: none;
+    color: #5b6478;
+    display: flex;
+    justify-content: center;
+    padding: 16px;
+    text-align: center;
+
+    &:hover {
+      box-shadow: none;
+    }
+  }
 }
+

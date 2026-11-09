@@ -46,6 +46,17 @@ export const ProjectGroups = {
   OTHERS: 'others',
 };
 
+// SPECIAL1: company-wide sections of the home page, in display order; projects without a section
+// are shown under UNSORTED at the end
+export const ProjectSections = {
+  SALES: 'sales',
+  DELIVERY: 'delivery',
+  FINANCE: 'finance',
+  MARKETING: 'marketing',
+  EVERYONE: 'everyone',
+  UNSORTED: 'unsorted',
+};
+
 export const ProjectTypes = {
   PRIVATE: 'private',
   SHARED: 'shared',
