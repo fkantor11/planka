@@ -150,6 +150,33 @@ module.exports = {
       list: values.list,
     });
 
+    // SPECIAL1: newCardOnSubscribedBoard (the creator is excluded by createMany)
+    try {
+      const boardSubscriptionUserIds = await sails.helpers.boards.getSubscriptionUserIds(
+        card.boardId,
+        card.creatorUserId,
+      );
+
+      await sails.helpers.notifications.createMany.with({
+        webhooks,
+        arrayOfValues: boardSubscriptionUserIds.map((userId) => ({
+          userId,
+          card,
+          type: Notification.Types.CREATE_CARD,
+          data: {
+            card: _.pick(card, ['name']),
+            board: _.pick(values.board, ['id', 'name']),
+          },
+          creatorUser: values.creatorUser,
+        })),
+        project: inputs.project,
+        board: values.board,
+        list: values.list,
+      });
+    } catch (error) {
+      sails.log.error(`Error creating card creation notifications: ${error}`);
+    }
+
     return card;
   },
 };

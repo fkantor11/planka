@@ -115,6 +115,18 @@ module.exports = {
       userId: userIdOrIds,
     });
 
+    // SPECIAL1
+    await CardReminder.qm.delete({
+      userId: userIdOrIds,
+    });
+
+    const userIds = _.castArray(userIdOrIds);
+
+    await sails.sendNativeQuery('DELETE FROM held_email WHERE user_id = ANY($1)', [userIds]);
+    await sails.sendNativeQuery('DELETE FROM notification_marker WHERE user_id = ANY($1)', [
+      userIds,
+    ]);
+
     return {
       projectManagers,
       boardMemberships,

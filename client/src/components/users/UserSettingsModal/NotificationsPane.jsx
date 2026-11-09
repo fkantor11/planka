@@ -9,6 +9,7 @@ import { Tab } from 'semantic-ui-react';
 
 import selectors from '../../../selectors';
 import entryActions from '../../../entry-actions';
+import NotificationSettings from '../NotificationSettings';
 import NotificationServices from '../../notification-services/NotificationServices';
 
 import styles from './NotificationsPane.module.scss';
@@ -27,6 +28,8 @@ const NotificationsPane = React.memo(() => {
 
   return (
     <Tab.Pane attached={false} className={styles.wrapper}>
+      {/* SPECIAL1: per-event settings, digest and quiet hours; Apprise services stay below */}
+      <NotificationSettings />
       <NotificationServices ids={notificationServiceIds} onCreate={handleCreate} />
     </Tab.Pane>
   );

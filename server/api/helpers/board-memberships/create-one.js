@@ -102,6 +102,26 @@ module.exports = {
       user: inputs.actorUser,
     });
 
+    // SPECIAL1: addedToProjectOrBoard (createMany skips the actor, e.g. the board creator)
+    try {
+      await sails.helpers.notifications.createOne.with({
+        webhooks,
+        values: {
+          userId: values.user.id,
+          type: Notification.Types.ADD_TO_BOARD,
+          data: {
+            project: _.pick(inputs.project, ['id', 'name']),
+            board: _.pick(values.board, ['id', 'name']),
+          },
+          creatorUser: inputs.actorUser,
+        },
+        project: inputs.project,
+        board: values.board,
+      });
+    } catch (error) {
+      sails.log.error(`Error creating board membership notification: ${error}`);
+    }
+
     return boardMembership;
   },
 };

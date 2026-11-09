@@ -45,11 +45,13 @@
  *           example: "1357158568008091266"
  *         boardId:
  *           type: string
- *           description: ID of the board associated with the notification (denormalized)
+ *           nullable: true
+ *           description: ID of the board associated with the notification (denormalized, null for addToProject)
  *           example: "1357158568008091267"
  *         cardId:
  *           type: string
- *           description: ID of the card associated with the notification
+ *           nullable: true
+ *           description: ID of the card associated with the notification (null for addToProject / addToBoard)
  *           example: "1357158568008091268"
  *         commentId:
  *           type: string
@@ -63,7 +65,7 @@
  *           example: "1357158568008091270"
  *         type:
  *           type: string
- *           enum: [moveCard, commentCard, addMemberToCard, mentionInComment]
+ *           enum: [moveCard, commentCard, addMemberToCard, mentionInComment, completeCard, changeDueDate, dueSoon, overdue, addToProject, addToBoard, createCard, cardReminder]
  *           description: Type of the notification
  *           example: commentCard
  *         data:
@@ -94,10 +96,36 @@ const Types = {
   COMMENT_CARD: 'commentCard',
   ADD_MEMBER_TO_CARD: 'addMemberToCard',
   MENTION_IN_COMMENT: 'mentionInComment',
+  // SPECIAL1
+  COMPLETE_CARD: 'completeCard',
+  CHANGE_DUE_DATE: 'changeDueDate',
+  DUE_SOON: 'dueSoon',
+  OVERDUE: 'overdue',
+  ADD_TO_PROJECT: 'addToProject',
+  ADD_TO_BOARD: 'addToBoard',
+  CREATE_CARD: 'createCard',
+  CARD_REMINDER: 'cardReminder',
+};
+
+// SPECIAL1: which user setting (utils/notification-settings Events) controls each type
+const EVENT_KEY_BY_TYPE = {
+  [Types.MOVE_CARD]: 'movedSubscribed',
+  [Types.COMMENT_CARD]: 'commentOnSubscribed',
+  [Types.ADD_MEMBER_TO_CARD]: 'addedToCard',
+  [Types.MENTION_IN_COMMENT]: 'mentioned',
+  [Types.COMPLETE_CARD]: 'completedSubscribed',
+  [Types.CHANGE_DUE_DATE]: 'dueDateChanged',
+  [Types.DUE_SOON]: 'dueSoon',
+  [Types.OVERDUE]: 'overdue',
+  [Types.ADD_TO_PROJECT]: 'addedToProjectOrBoard',
+  [Types.ADD_TO_BOARD]: 'addedToProjectOrBoard',
+  [Types.CREATE_CARD]: 'newCardOnSubscribedBoard',
+  [Types.CARD_REMINDER]: 'reminder',
 };
 
 module.exports = {
   Types,
+  EVENT_KEY_BY_TYPE,
 
   attributes: {
     //  ╔═╗╦═╗╦╔╦╗╦╔╦╗╦╦  ╦╔═╗╔═╗
@@ -139,12 +167,10 @@ module.exports = {
     // Denormalization
     boardId: {
       model: 'Board',
-      required: true,
       columnName: 'board_id',
     },
     cardId: {
       model: 'Card',
-      required: true,
       columnName: 'card_id',
     },
     commentId: {

@@ -3,6 +3,10 @@
  * Licensed under the Fair Use License: https://github.com/plankanban/planka/blob/master/LICENSE.md
  */
 
+const {
+  normalize: normalizeNotificationSettings,
+} = require('../../../utils/notification-settings');
+
 module.exports = {
   sync: true,
 
@@ -30,6 +34,7 @@ module.exports = {
         'termsAcceptedAt',
         'totpSecret',
         'totpRecoveryCodes',
+        'lastDigestAt',
       ]),
       avatar: inputs.record.avatar && {
         url: `${sails.config.custom.baseUrl}/user-avatars/${inputs.record.avatar.uploadedFileId}/original.${inputs.record.avatar.extension}`,
@@ -67,6 +72,11 @@ module.exports = {
         });
 
         if (isForCurrentUser) {
+          // SPECIAL1: always a complete settings object, defaults filled in
+          data.notificationSettings = normalizeNotificationSettings(
+            inputs.record.notificationSettings,
+          );
+
           return data;
         }
 

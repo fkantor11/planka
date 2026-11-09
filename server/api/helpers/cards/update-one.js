@@ -380,6 +380,17 @@ module.exports = {
         }),
         user: inputs.actorUser,
       });
+
+      // SPECIAL1: done / due date notifications
+      await sails.helpers.notifications.handleCardUpdate.with({
+        project,
+        board,
+        list,
+        webhooks,
+        prevCard: inputs.record,
+        card,
+        actorUser: inputs.actorUser,
+      });
     }
 
     if (!_.isUndefined(isSubscribed)) {

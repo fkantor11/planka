@@ -74,22 +74,7 @@ const PreferencesPane = React.memo(() => {
 
   return (
     <Tab.Pane attached={false} className={styles.wrapper}>
-      <Radio
-        toggle
-        name="subscribeToOwnCards"
-        checked={user.subscribeToOwnCards}
-        label={t('common.subscribeToMyOwnCardsByDefault')}
-        className={styles.radio}
-        onChange={handleChange}
-      />
-      <Radio
-        toggle
-        name="subscribeToCardWhenCommenting"
-        checked={user.subscribeToCardWhenCommenting}
-        label={t('common.subscribeToCardWhenCommenting')}
-        className={styles.radio}
-        onChange={handleChange}
-      />
+      {/* SPECIAL1: the card subscription toggles moved to the notifications pane */}
       <Radio
         toggle
         name="turnOffRecentCardHighlighting"

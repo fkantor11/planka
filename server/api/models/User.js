@@ -163,6 +163,10 @@
  *           type: integer
  *           description: Number of unused recovery codes (visible only to current user or admin)
  *           example: 10
+ *         notificationSettings:
+ *           type: object
+ *           description: Notification settings (visible only to current user). events.<key>.inApp/email, dueReminderOffset (1h|1d|2d), digest (none|daily|weekly), quietHours
+ *           example: {"events": {"mentioned": {"inApp": true, "email": true}}, "dueReminderOffset": "1d", "digest": "none", "quietHours": false}
  *         isDeactivated:
  *           type: boolean
  *           default: false
@@ -288,6 +292,7 @@ const PERSONAL_FIELD_NAMES = [
   'defaultHomeView',
   'defaultProjectsOrder',
   'autoLogoutMode',
+  'notificationSettings',
 ];
 
 const SECRET_FIELD_NAMES = [
@@ -462,6 +467,15 @@ module.exports = {
     totpRecoveryCodes: {
       type: 'json',
       columnName: 'totp_recovery_codes',
+    },
+    // SPECIAL1: null = defaults, see utils/notification-settings
+    notificationSettings: {
+      type: 'json',
+      columnName: 'notification_settings',
+    },
+    lastDigestAt: {
+      type: 'ref',
+      columnName: 'last_digest_at',
     },
 
     //  ╔═╗╔╦╗╔╗ ╔═╗╔╦╗╔═╗

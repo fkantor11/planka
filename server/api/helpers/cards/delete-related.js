@@ -67,5 +67,8 @@ module.exports = {
     await Action.qm.delete({
       cardId: cardIdOrIds,
     });
+
+    // SPECIAL1
+    await sails.helpers.cardReminders.deleteRelatedToCards(cardIdOrIds);
   },
 };

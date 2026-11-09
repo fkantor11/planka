@@ -127,6 +127,15 @@ export const NotificationTypes = {
   COMMENT_CARD: 'commentCard',
   ADD_MEMBER_TO_CARD: 'addMemberToCard',
   MENTION_IN_COMMENT: 'mentionInComment',
+  // SPECIAL1
+  COMPLETE_CARD: 'completeCard',
+  CHANGE_DUE_DATE: 'changeDueDate',
+  DUE_SOON: 'dueSoon',
+  OVERDUE: 'overdue',
+  ADD_TO_PROJECT: 'addToProject',
+  ADD_TO_BOARD: 'addToBoard',
+  CREATE_CARD: 'createCard',
+  CARD_REMINDER: 'cardReminder',
 };
 
 export const NotificationServiceFormats = {

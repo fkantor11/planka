@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation, Trans } from 'react-i18next';
 import { Link } from 'react-router';
-import { Button } from 'semantic-ui-react';
+import { Button, Icon } from 'semantic-ui-react';
 
 import selectors from '../../../selectors';
 import entryActions from '../../../entry-actions';
@@ -21,6 +21,7 @@ import TimeAgo from '../../common/TimeAgo';
 import UserAvatar from '../../users/UserAvatar';
 
 import styles from './Item.module.scss';
+import systemStyles from './SystemItem.module.scss';
 
 const Item = React.memo(({ id, onClose }) => {
   const selectNotificationById = useMemo(() => selectors.makeSelectNotificationById(), []);
@@ -42,13 +43,32 @@ const Item = React.memo(({ id, onClose }) => {
     dispatch(entryActions.deleteNotification(id));
   }, [id, dispatch]);
 
-  const creatorUserName = isUserStatic(creatorUser)
-    ? t(`common.${creatorUser.name}`, {
-        context: 'title',
-      })
-    : creatorUser.name;
+  // SPECIAL1: system notifications (due dates, reminders) have no creator
+  let creatorUserName = '';
+  if (creatorUser) {
+    creatorUserName = isUserStatic(creatorUser)
+      ? t(`common.${creatorUser.name}`, {
+          context: 'title',
+        })
+      : creatorUser.name;
+  }
 
-  const cardName = card ? card.name : notification.data.card.name;
+  const notificationData = notification.data || {};
+  const cardName = card ? card.name : (notificationData.card && notificationData.card.name) || '';
+
+  const cardLink = (
+    <Link to={Paths.CARDS.replace(':id', notification.cardId)} onClick={onClose}>
+      {cardName}
+    </Link>
+  );
+
+  const formatDueDate = (value) =>
+    value
+      ? t('format:longDateTime', {
+          postProcess: 'formatDate',
+          value: new Date(value),
+        })
+      : '';
 
   let contentNode;
   switch (notification.type) {
@@ -144,13 +164,123 @@ const Item = React.memo(({ id, onClose }) => {
 
       break;
     }
+    case NotificationTypes.COMPLETE_CARD:
+      contentNode = (
+        <Trans i18nKey="notify.cardCompleted" values={{ card: cardName }}>
+          {'Card '}
+          {cardLink}
+          {' is done'}
+        </Trans>
+      );
+
+      break;
+    case NotificationTypes.CHANGE_DUE_DATE: {
+      const date = formatDueDate(notificationData.dueDate);
+
+      contentNode = (
+        <Trans i18nKey="notify.cardDueDateChanged" values={{ card: cardName, date }}>
+          {'The due date of '}
+          {cardLink}
+          {` changed to ${date}`}
+        </Trans>
+      );
+
+      break;
+    }
+    case NotificationTypes.DUE_SOON: {
+      const date = formatDueDate(notificationData.dueDate);
+
+      contentNode = (
+        <Trans i18nKey="notify.cardDueSoon" values={{ card: cardName, date }}>
+          {'Card '}
+          {cardLink}
+          {` is due ${date}`}
+        </Trans>
+      );
+
+      break;
+    }
+    case NotificationTypes.OVERDUE:
+      contentNode = (
+        <Trans i18nKey="notify.cardOverdue" values={{ card: cardName }}>
+          {'Card '}
+          {cardLink}
+          {' is overdue'}
+        </Trans>
+      );
+
+      break;
+    case NotificationTypes.ADD_TO_PROJECT: {
+      const project = notificationData.project || {};
+
+      contentNode = (
+        <Trans i18nKey="notify.addedToProject" values={{ project: project.name }}>
+          {'You were added to project '}
+          <Link to={Paths.PROJECTS.replace(':id', project.id)} onClick={onClose}>
+            {project.name}
+          </Link>
+        </Trans>
+      );
+
+      break;
+    }
+    case NotificationTypes.ADD_TO_BOARD: {
+      const board = notificationData.board || {};
+
+      contentNode = (
+        <Trans i18nKey="notify.addedToBoard" values={{ board: board.name }}>
+          {'You were added to board '}
+          <Link to={Paths.BOARDS.replace(':id', notification.boardId)} onClick={onClose}>
+            {board.name}
+          </Link>
+        </Trans>
+      );
+
+      break;
+    }
+    case NotificationTypes.CREATE_CARD: {
+      const boardName = (notificationData.board && notificationData.board.name) || '';
+
+      contentNode = (
+        <Trans i18nKey="notify.cardCreatedOnBoard" values={{ card: cardName, board: boardName }}>
+          {'New card '}
+          {cardLink}
+          {` on ${boardName}`}
+        </Trans>
+      );
+
+      break;
+    }
+    case NotificationTypes.CARD_REMINDER:
+      contentNode = (
+        <>
+          <Trans i18nKey="notify.cardReminder" values={{ card: cardName }}>
+            {'Reminder: '}
+            {cardLink}
+          </Trans>
+          {notificationData.note && (
+            <span className={systemStyles.note}>{`«${notificationData.note}»`}</span>
+          )}
+        </>
+      );
+
+      break;
     default:
       contentNode = null;
   }
 
   return (
     <div className={styles.wrapper}>
-      <UserAvatar id={notification.creatorUserId} size="large" />
+      {notification.creatorUserId ? (
+        <UserAvatar id={notification.creatorUserId} size="large" />
+      ) : (
+        <span className={systemStyles.avatar}>
+          <Icon
+            fitted
+            name={notification.type === NotificationTypes.CARD_REMINDER ? 'bell' : 'clock'}
+          />
+        </span>
+      )}
       <span className={styles.content}>
         <div>{contentNode}</div>
         <span className={styles.date}>

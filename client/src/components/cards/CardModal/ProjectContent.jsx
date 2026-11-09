@@ -44,6 +44,7 @@ import AddTaskListStep from '../../task-lists/AddTaskListStep';
 import Attachments from '../../attachments/Attachments';
 import AddAttachmentStep from '../../attachments/AddAttachmentStep';
 import AddCustomFieldGroupStep from '../../custom-field-groups/AddCustomFieldGroupStep';
+import CardRemindersButton from '../CardReminders';
 
 import styles from './ProjectContent.module.scss';
 
@@ -705,6 +706,11 @@ const ProjectContent = React.memo(() => {
                     </Button>
                   </EditDueDatePopup>
                 )}
+                <CardRemindersButton
+                  cardId={card.id}
+                  className={classNames(styles.actionButton, styles.hidable)}
+                  iconClassName={styles.actionIcon}
+                />
                 {canEditStopwatch && (
                   <EditStopwatchPopup cardId={card.id}>
                     <Button fluid className={classNames(styles.actionButton, styles.hidable)}>

@@ -3,353 +3,250 @@
  * Licensed under the Fair Use License: https://github.com/plankanban/planka/blob/master/LICENSE.md
  */
 
-const escapeMarkdown = require('escape-markdown');
-const escapeHtml = require('escape-html');
+// SPECIAL1: every notification goes through here and honours the recipient's settings: the in-app
+// toggle decides the Notification row, its broadcast, webhooks and Apprise services; the email
+// toggle decides the email (independently). The actor and deactivated users are never notified.
 
-const { mentionMarkupToText } = require('../../../utils/mentions');
+const { getChannels } = require('../../../utils/notification-settings');
+const {
+  buildTitle,
+  buildBodyByFormat,
+  buildEmailHtml,
+} = require('../../../utils/notification-content');
 
-const buildTitle = (notification, t) => {
-  switch (notification.type) {
-    case Notification.Types.MOVE_CARD:
-      return t('Card Moved');
-    case Notification.Types.COMMENT_CARD:
-      return t('New Comment');
-    case Notification.Types.ADD_MEMBER_TO_CARD:
-      return t('You Were Added to Card');
-    case Notification.Types.MENTION_IN_COMMENT:
-      return t('You Were Mentioned in Comment');
-    default:
-      return null;
-  }
-};
-
-const buildBodyByFormat = (board, card, notification, actorUser, t) => {
-  const markdownCardLink = `[${escapeMarkdown(card.name)}](${sails.config.custom.baseUrl}/cards/${card.id})`;
-  const htmlCardLink = `<a href="${sails.config.custom.baseUrl}/cards/${card.id}">${escapeHtml(card.name)}</a>`;
-
-  switch (notification.type) {
-    case Notification.Types.MOVE_CARD: {
-      const fromListName = sails.helpers.lists.resolveName(notification.data.fromList, t);
-      const toListName = sails.helpers.lists.resolveName(notification.data.toList, t);
-
-      return {
-        text: t(
-          '%s moved %s from %s to %s on %s',
-          actorUser.name,
-          card.name,
-          fromListName,
-          toListName,
-          board.name,
-        ),
-        markdown: t(
-          '%s moved %s from %s to %s on %s',
-          escapeMarkdown(actorUser.name),
-          markdownCardLink,
-          `**${escapeMarkdown(fromListName)}**`,
-          `**${escapeMarkdown(toListName)}**`,
-          escapeMarkdown(board.name),
-        ),
-        html: t(
-          '%s moved %s from %s to %s on %s',
-          escapeHtml(actorUser.name),
-          htmlCardLink,
-          `<b>${escapeHtml(fromListName)}</b>`,
-          `<b>${escapeHtml(toListName)}</b>`,
-          escapeHtml(board.name),
-        ),
-      };
-    }
-    case Notification.Types.COMMENT_CARD: {
-      const commentText = _.truncate(mentionMarkupToText(notification.data.text));
-
-      return {
-        text: `${t(
-          '%s left a new comment to %s on %s',
-          actorUser.name,
-          card.name,
-          board.name,
-        )}:\n${commentText}`,
-        markdown: `${t(
-          '%s left a new comment to %s on %s',
-          escapeMarkdown(actorUser.name),
-          markdownCardLink,
-          escapeMarkdown(board.name),
-        )}:\n\n*${escapeMarkdown(commentText)}*`,
-        html: `${t(
-          '%s left a new comment to %s on %s',
-          escapeHtml(actorUser.name),
-          htmlCardLink,
-          escapeHtml(board.name),
-        )}:\n\n<i>${escapeHtml(commentText)}</i>`,
-      };
-    }
-    case Notification.Types.ADD_MEMBER_TO_CARD:
-      return {
-        text: t('%s added you to %s on %s', actorUser.name, card.name, board.name),
-        markdown: t(
-          '%s added you to %s on %s',
-          escapeMarkdown(actorUser.name),
-          markdownCardLink,
-          escapeMarkdown(board.name),
-        ),
-        html: t(
-          '%s added you to %s on %s',
-          escapeHtml(actorUser.name),
-          htmlCardLink,
-          escapeHtml(board.name),
-        ),
-      };
-    case Notification.Types.MENTION_IN_COMMENT: {
-      const commentText = _.truncate(mentionMarkupToText(notification.data.text));
-
-      return {
-        text: `${t(
-          '%s mentioned you in %s on %s',
-          actorUser.name,
-          card.name,
-          board.name,
-        )}:\n${commentText}`,
-        markdown: `${t(
-          '%s mentioned you in %s on %s',
-          escapeMarkdown(actorUser.name),
-          markdownCardLink,
-          escapeMarkdown(board.name),
-        )}:\n\n*${escapeMarkdown(commentText)}*`,
-        html: `${t(
-          '%s mentioned you in %s on %s',
-          escapeHtml(actorUser.name),
-          htmlCardLink,
-          escapeHtml(board.name),
-        )}:\n\n<i>${escapeHtml(commentText)}</i>`,
-      };
-    }
-    default:
-      return null;
-  }
-};
-
-const buildAndSendNotifications = async (services, board, card, notification, actorUser, t) => {
+const buildAndSendNotifications = async (services, context, notification, actorUser, user, t) => {
   await sails.helpers.utils.sendNotifications(
     services,
     buildTitle(notification, t),
-    buildBodyByFormat(board, card, notification, actorUser, t),
+    buildBodyByFormat(context, notification, actorUser, t, user.language),
   );
-};
-
-// TODO: use templates (views) to build html
-const buildEmail = (board, card, notification, actorUser, notifiableUser, t) => {
-  const cardLink = `<a href="${sails.config.custom.baseUrl}/cards/${card.id}">${escapeHtml(card.name)}</a>`;
-  const boardLink = `<a href="${sails.config.custom.baseUrl}/boards/${board.id}">${escapeHtml(board.name)}</a>`;
-
-  let html;
-  switch (notification.type) {
-    case Notification.Types.MOVE_CARD: {
-      const fromListName = sails.helpers.lists.resolveName(notification.data.fromList, t);
-      const toListName = sails.helpers.lists.resolveName(notification.data.toList, t);
-
-      html = `<p>${t(
-        '%s moved %s from %s to %s on %s',
-        escapeHtml(actorUser.name),
-        cardLink,
-        escapeHtml(fromListName),
-        escapeHtml(toListName),
-        boardLink,
-      )}</p>`;
-
-      break;
-    }
-    case Notification.Types.COMMENT_CARD:
-      html = `<p>${t(
-        '%s left a new comment to %s on %s',
-        escapeHtml(actorUser.name),
-        cardLink,
-        boardLink,
-      )}</p><p>${escapeHtml(mentionMarkupToText(notification.data.text))}</p>`;
-
-      break;
-    case Notification.Types.ADD_MEMBER_TO_CARD:
-      html = `<p>${t(
-        '%s added you to %s on %s',
-        escapeHtml(actorUser.name),
-        cardLink,
-        boardLink,
-      )}</p>`;
-
-      break;
-    case Notification.Types.MENTION_IN_COMMENT:
-      html = `<p>${t(
-        '%s mentioned you in %s on %s',
-        escapeHtml(actorUser.name),
-        cardLink,
-        boardLink,
-      )}</p><p>${escapeHtml(mentionMarkupToText(notification.data.text))}</p>`;
-
-      break;
-    default:
-      return null; // TODO: throw error?
-  }
-
-  return {
-    html,
-    to: notifiableUser.email,
-    subject: buildTitle(notification, t),
-  };
-};
-
-const sendEmails = async (transporter, emails) => {
-  await Promise.all(
-    emails.map((email) =>
-      sails.helpers.utils.sendEmail.with({
-        ...email,
-        transporter,
-      }),
-    ),
-  );
-
-  transporter.close();
 };
 
 module.exports = {
   inputs: {
+    // [{ userId, type, data, creatorUser?, card?, comment?, action? }]
     arrayOfValues: {
       type: 'ref',
       required: true,
     },
     project: {
       type: 'ref',
-      required: true,
     },
     board: {
       type: 'ref',
-      required: true,
     },
     list: {
       type: 'ref',
-      required: true,
     },
     webhooks: {
       type: 'ref',
-      required: true,
+    },
+    now: {
+      type: 'ref',
     },
   },
 
   async fn(inputs) {
-    const { arrayOfValues } = inputs;
+    // Internal (non-database) actors such as User.INTERNAL are stored as no creator
+    const getCreatorUserId = (values) =>
+      values.creatorUser && /^\d+$/.test(values.creatorUser.id) ? values.creatorUser.id : null;
 
-    const ids = await sails.helpers.utils.generateIds(arrayOfValues.length);
-    const valuesById = {};
-
-    const notifications = await Notification.qm.create(
-      arrayOfValues.map((values) => {
-        const id = ids.shift();
-
-        const nextValues = {
-          ...values,
-          id,
-          creatorUserId: values.creatorUser.id,
-          boardId: values.card.boardId,
-          cardId: values.card.id,
-        };
-        if (values.comment) {
-          nextValues.commentId = values.comment.id;
-        }
-        if (values.action) {
-          nextValues.actionId = values.action.id;
-        }
-
-        valuesById[id] = { ...nextValues }; // FIXME: hack
-        return nextValues;
-      }),
+    let arrayOfValues = _.uniqBy(
+      inputs.arrayOfValues.filter(
+        (values) =>
+          values.userId && (!values.creatorUser || values.userId !== values.creatorUser.id),
+      ),
+      (values) => `${values.userId}:${values.type}`,
     );
 
-    notifications.forEach((notification) => {
-      const values = valuesById[notification.id];
+    if (arrayOfValues.length === 0) {
+      return [];
+    }
 
-      sails.sockets.broadcast(`user:${notification.userId}`, 'notificationCreate', {
-        item: notification,
-        included: {
-          users: [sails.helpers.users.presentOne(values.creatorUser, {})], // FIXME: hack
-        },
-      });
-
-      sails.helpers.utils.sendWebhooks.with({
-        webhooks: inputs.webhooks,
-        event: Webhook.Events.NOTIFICATION_CREATE,
-        buildData: () => ({
-          item: notification,
-          included: {
-            projects: [inputs.project],
-            boards: [inputs.board],
-            lists: [inputs.list],
-            cards: [values.card],
-            ...(notification.commentId
-              ? {
-                  comments: [values.comment],
-                }
-              : {
-                  actions: [values.action],
-                }),
-          },
-        }),
-        user: values.creatorUser,
-      });
-    });
-
-    const notificationsByUserId = _.groupBy(notifications, 'userId');
-
-    const notifiableUsers = await User.qm.getByIds(Object.keys(notificationsByUserId), {
+    const users = await User.qm.getByIds(_.uniq(_.map(arrayOfValues, 'userId')), {
       withDeactivated: false,
     });
 
-    if (notifiableUsers.length > 0) {
-      const notifiableUserIds = sails.helpers.utils.mapRecords(notifiableUsers);
+    const userById = _.keyBy(users, 'id');
+    arrayOfValues = arrayOfValues.filter((values) => userById[values.userId]);
 
-      const notificationServices = await NotificationService.qm.getByUserIds(notifiableUserIds);
-      const { transporter } = await sails.helpers.utils.makeSmtpTransporter();
+    const channelsByValues = new Map(
+      arrayOfValues.map((values) => [
+        values,
+        getChannels(
+          userById[values.userId].notificationSettings,
+          Notification.EVENT_KEY_BY_TYPE[values.type],
+        ),
+      ]),
+    );
 
-      if (notificationServices.length > 0 || transporter) {
+    const inAppArrayOfValues = arrayOfValues.filter((values) => channelsByValues.get(values).inApp);
+    const emailArrayOfValues = arrayOfValues.filter((values) => channelsByValues.get(values).email);
+
+    const context = {
+      project: inputs.project,
+      board: inputs.board,
+    };
+
+    const getCard = (values) => values.card || null;
+
+    let notifications = [];
+
+    if (inAppArrayOfValues.length > 0) {
+      const ids = await sails.helpers.utils.generateIds(inAppArrayOfValues.length);
+      const valuesById = {};
+
+      notifications = await Notification.qm.create(
+        inAppArrayOfValues.map((values) => {
+          const id = ids.shift();
+          const card = getCard(values);
+
+          const nextValues = {
+            id,
+            userId: values.userId,
+            type: values.type,
+            data: values.data,
+            creatorUserId: getCreatorUserId(values),
+            boardId: card ? card.boardId : (inputs.board && inputs.board.id) || null,
+            cardId: card ? card.id : null,
+          };
+
+          if (values.comment) {
+            nextValues.commentId = values.comment.id;
+          }
+
+          if (values.action) {
+            nextValues.actionId = values.action.id;
+          }
+
+          valuesById[id] = values;
+          return nextValues;
+        }),
+      );
+
+      const { webhooks = await Webhook.qm.getAll() } = inputs;
+
+      notifications.forEach((notification) => {
+        const values = valuesById[notification.id];
+
+        sails.sockets.broadcast(`user:${notification.userId}`, 'notificationCreate', {
+          item: notification,
+          included: {
+            users: getCreatorUserId(values)
+              ? [sails.helpers.users.presentOne(values.creatorUser, {})] // FIXME: hack
+              : [],
+          },
+        });
+
+        sails.helpers.utils.sendWebhooks.with({
+          webhooks,
+          event: Webhook.Events.NOTIFICATION_CREATE,
+          buildData: () => ({
+            item: notification,
+            included: {
+              ...(inputs.project && {
+                projects: [inputs.project],
+              }),
+              ...(inputs.board && {
+                boards: [inputs.board],
+              }),
+              ...(inputs.list && {
+                lists: [inputs.list],
+              }),
+              ...(values.card && {
+                cards: [values.card],
+              }),
+              ...(values.comment && {
+                comments: [values.comment],
+              }),
+              ...(values.action && {
+                actions: [values.action],
+              }),
+            },
+          }),
+          user: values.creatorUser || {},
+        });
+      });
+
+      // Apprise services follow the in-app decision
+      const notificationServices = await NotificationService.qm.getByUserIds(
+        Object.keys(_.groupBy(notifications, 'userId')),
+      );
+
+      if (notificationServices.length > 0) {
         const notificationServicesByUserId = _.groupBy(notificationServices, 'userId');
 
-        notifiableUsers.forEach(async (notifiableUser) => {
-          const t = sails.helpers.utils.makeTranslator(notifiableUser.language);
+        notifications.forEach((notification) => {
+          const userNotificationServices = notificationServicesByUserId[notification.userId];
 
-          const emails = notificationsByUserId[notifiableUser.id].flatMap((notification) => {
-            const values = valuesById[notification.id];
-
-            if (notificationServicesByUserId[notifiableUser.id]) {
-              const services = notificationServicesByUserId[notifiableUser.id].map(
-                (notificationService) => _.pick(notificationService, ['url', 'format']),
-              );
-
-              buildAndSendNotifications(
-                services,
-                inputs.board,
-                values.card,
-                notification,
-                values.creatorUser,
-                t,
-              );
-            }
-
-            if (transporter) {
-              return buildEmail(
-                inputs.board,
-                values.card,
-                notification,
-                values.creatorUser,
-                notifiableUser,
-                t,
-              );
-            }
-
-            return [];
-          });
-
-          if (emails.length > 0) {
-            sendEmails(transporter, emails);
+          if (!userNotificationServices) {
+            return;
           }
+
+          const values = valuesById[notification.id];
+          const user = userById[notification.userId];
+
+          buildAndSendNotifications(
+            userNotificationServices.map((notificationService) =>
+              _.pick(notificationService, ['url', 'format']),
+            ),
+            {
+              ...context,
+              card: getCard(values),
+            },
+            notification,
+            values.creatorUser || null,
+            user,
+            sails.helpers.utils.makeTranslator(user.language),
+          ).catch((error) => {
+            sails.log.error(`Error sending notification: ${error}`);
+          });
         });
       }
+    }
+
+    if (emailArrayOfValues.length > 0) {
+      const emailArrayOfValuesByUserId = _.groupBy(emailArrayOfValues, 'userId');
+
+      // Not awaited, like before: SMTP must not slow down the request
+      Promise.all(
+        Object.entries(emailArrayOfValuesByUserId).map(async ([userId, userArrayOfValues]) => {
+          const user = userById[userId];
+          const t = sails.helpers.utils.makeTranslator(user.language);
+
+          const emails = userArrayOfValues.flatMap((values) => {
+            const html = buildEmailHtml(
+              {
+                ...context,
+                card: getCard(values),
+              },
+              values,
+              values.creatorUser || null,
+              t,
+              user.language,
+            );
+
+            if (!html) {
+              return [];
+            }
+
+            return {
+              html,
+              subject: buildTitle(values, t),
+            };
+          });
+
+          try {
+            await sails.helpers.notifications.deliverEmails.with({
+              user,
+              emails,
+              now: inputs.now,
+            });
+          } catch (error) {
+            sails.log.error(`Error delivering notification emails: ${error}`);
+          }
+        }),
+      );
     }
 
     return notifications;

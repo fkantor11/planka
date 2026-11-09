@@ -87,6 +87,24 @@ module.exports = {
       user: inputs.actorUser,
     });
 
+    // SPECIAL1: addedToProjectOrBoard (createMany skips the actor, e.g. the project creator)
+    try {
+      await sails.helpers.notifications.createOne.with({
+        webhooks,
+        values: {
+          userId: values.user.id,
+          type: Notification.Types.ADD_TO_PROJECT,
+          data: {
+            project: _.pick(values.project, ['id', 'name']),
+          },
+          creatorUser: inputs.actorUser,
+        },
+        project: values.project,
+      });
+    } catch (error) {
+      sails.log.error(`Error creating project manager notification: ${error}`);
+    }
+
     return projectManager;
   },
 };

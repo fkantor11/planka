@@ -1,0 +1,27 @@
+/*!
+ * Copyright (c) 2026 PLANKA Software GmbH
+ * Licensed under the Fair Use License: https://github.com/plankanban/planka/blob/master/LICENSE.md
+ */
+
+// SPECIAL1: notifications without a creator (due dates, reminders)
+
+:global(#app) {
+  .avatar {
+    align-items: center;
+    background: #182f66;
+    border-radius: 50%;
+    color: #fff;
+    display: inline-flex;
+    font-size: 15px;
+    height: 36px;
+    justify-content: center;
+    vertical-align: top;
+    width: 36px;
+  }
+
+  .note {
+    color: #3b4558;
+    display: block;
+    font-style: italic;
+  }
+}

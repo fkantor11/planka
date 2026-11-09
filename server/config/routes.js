@@ -294,6 +294,12 @@ module.exports.routes = {
   'GET /api/boards/:boardId/actions': 'actions/index-in-board',
   'GET /api/cards/:cardId/actions': 'actions/index-in-card',
 
+  // SPECIAL1: personal card reminders
+  'GET /api/cards/:cardId/card-reminders': 'card-reminders/index',
+  'POST /api/cards/:cardId/card-reminders': 'card-reminders/create',
+  'PATCH /api/card-reminders/:id': 'card-reminders/update',
+  'DELETE /api/card-reminders/:id': 'card-reminders/delete',
+
   'GET /api/notifications': 'notifications/index',
   'GET /api/notifications/:id': 'notifications/show',
   'PATCH /api/notifications/:id': 'notifications/update',

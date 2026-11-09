@@ -1,0 +1,167 @@
+/*!
+ * Copyright (c) 2026 PLANKA Software GmbH
+ * Licensed under the Fair Use License: https://github.com/plankanban/planka/blob/master/LICENSE.md
+ */
+
+// SPECIAL1: notification settings pane
+
+$navy: #182f66;
+$blue: #22428f;
+$light: #eff0f5;
+$border: #dfe2ec;
+$muted: #6b7690;
+$text: #1f2a44;
+
+:global(#app) {
+  .wrapper {
+    color: $text;
+    margin-bottom: 24px;
+  }
+
+  .table {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+  }
+
+  .eventHeader,
+  .channelHeader {
+    border-bottom: 2px solid $navy;
+    color: $navy;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    padding: 0 8px 8px;
+    text-align: left;
+    vertical-align: bottom;
+  }
+
+  .eventHeader {
+    padding-left: 0;
+  }
+
+  .channelHeader {
+    text-align: center;
+    white-space: nowrap;
+    width: 88px;
+  }
+
+  .groupHeader {
+    color: $muted;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 16px 0 6px;
+    text-align: left;
+    text-transform: uppercase;
+  }
+
+  .row {
+    td {
+      border-bottom: 1px solid $border;
+    }
+
+    &:hover td {
+      background: $light;
+    }
+  }
+
+  .eventCell {
+    font-size: 14px;
+    line-height: 20px;
+    padding: 9px 8px 9px 0;
+  }
+
+  .channelCell {
+    padding: 9px 8px;
+    text-align: center;
+  }
+
+  .checkbox {
+    vertical-align: middle;
+
+    &:global(.ui.checkbox input:checked ~ label::before) {
+      background: $navy;
+      border-color: $navy;
+    }
+
+    &:global(.ui.checkbox input:checked ~ label::after) {
+      color: #fff;
+    }
+  }
+
+  .field {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+
+  .fieldLabel {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .dropdown {
+    min-width: 180px;
+  }
+
+  .card {
+    background: $light;
+    border: 1px solid $border;
+    border-radius: 8px;
+    margin-top: 20px;
+    padding: 14px 16px;
+  }
+
+  .cardTitle {
+    color: $navy;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .cardText {
+    color: $muted;
+    font-size: 12px;
+    line-height: 17px;
+    margin-top: 2px;
+  }
+
+  .radios {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    margin-top: 10px;
+  }
+
+  .radio {
+    font-size: 14px;
+  }
+
+  .toggles {
+    border-top: 1px solid $border;
+    margin-top: 20px;
+    padding-top: 16px;
+  }
+
+  .toggle {
+    margin-bottom: 14px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .toggleInput:global(.ui.toggle.checkbox input:checked ~ label::before),
+  .toggleInput:global(.ui.toggle.checkbox input:focus:checked ~ label::before) {
+    background-color: $navy !important;
+  }
+
+  .toggleHint {
+    color: $muted;
+    font-size: 12px;
+    margin: 2px 0 0 62px;
+  }
+}

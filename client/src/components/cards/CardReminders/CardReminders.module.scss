@@ -1,0 +1,157 @@
+/*!
+ * Copyright (c) 2026 PLANKA Software GmbH
+ * Licensed under the Fair Use License: https://github.com/plankanban/planka/blob/master/LICENSE.md
+ */
+
+// SPECIAL1: personal card reminders (button badge + popup)
+
+$navy: #182f66;
+$blue: #22428f;
+$light: #eff0f5;
+$muted: #6b7690;
+
+:global(#app) {
+  .count {
+    background: $navy;
+    border-radius: 9px;
+    color: #fff;
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 18px;
+    margin-left: 6px;
+    min-width: 18px;
+    padding: 0 5px;
+    text-align: center;
+    vertical-align: 1px;
+  }
+
+  .list {
+    list-style: none;
+    margin: 0 0 12px;
+    padding: 0;
+  }
+
+  .item {
+    align-items: flex-start;
+    background: $light;
+    border-radius: 6px;
+    display: flex;
+    gap: 8px;
+    margin-bottom: 6px;
+    padding: 8px 6px 8px 10px;
+  }
+
+  .itemIcon {
+    color: $blue;
+    margin: 2px 0 0;
+  }
+
+  .itemContent {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .itemDate {
+    color: $navy;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 18px;
+  }
+
+  .itemRepeat {
+    color: $muted;
+    font-size: 12px;
+    font-weight: 400;
+    margin-left: 6px;
+
+    &::before {
+      content: "·";
+      margin-right: 6px;
+    }
+  }
+
+  .itemNote {
+    color: #3b4558;
+    font-size: 12px;
+    line-height: 16px;
+    margin-top: 2px;
+    overflow-wrap: anywhere;
+  }
+
+  .itemDelete {
+    background: transparent;
+    box-shadow: none;
+    color: $muted;
+    height: 24px;
+    margin: 0;
+    min-height: auto;
+    padding: 0;
+    width: 24px;
+
+    &:hover {
+      background: #dfe2ec;
+      color: #a3262a;
+    }
+  }
+
+  .form {
+    margin: 0;
+  }
+
+  .fields {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .field {
+    display: block;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .fieldBlock {
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .label {
+    color: $muted;
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .input {
+    background: #fff;
+    border: 1px solid #d4d7e2;
+    border-radius: 4px;
+    box-sizing: border-box;
+    color: #1f2a44;
+    font-family: inherit;
+    font-size: 14px;
+    height: 36px;
+    padding: 0 10px;
+    width: 100%;
+
+    &:focus {
+      border-color: $blue;
+      outline: none;
+    }
+  }
+
+  .error {
+    color: #a3262a;
+    font-size: 12px;
+    margin-bottom: 8px;
+  }
+
+  .hint {
+    color: $muted;
+    font-size: 12px;
+    line-height: 16px;
+    margin: 10px 0 0;
+  }
+}

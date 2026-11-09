@@ -27,7 +27,8 @@ export function* deleteAllNotifications() {
 export function* handleNotificationCreate(notification, users) {
   const { cardId } = yield select(selectors.selectPath);
 
-  if (notification.cardId === cardId) {
+  // SPECIAL1: project / board notifications have no card (and cardId is null off a card page)
+  if (notification.cardId && notification.cardId === cardId) {
     try {
       yield call(request, api.updateNotification, notification.id, {
         isRead: true,

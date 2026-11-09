@@ -100,6 +100,10 @@
  *                 enum: [never, 2m, 5m, 10m, 30m, 12h]
  *                 description: Auto-logout behavior on inactivity
  *                 example: 30m
+ *               notificationSettings:
+ *                 type: object
+ *                 description: Partial notification settings merged into the current ones (only for oneself)
+ *                 example: {"events": {"mentioned": {"email": false}}, "digest": "daily"}
  *               isDeactivated:
  *                 type: boolean
  *                 description: Whether the user account is deactivated and cannot log in (for admins)
@@ -129,6 +133,10 @@
  */
 
 const { idInput } = require('../../../utils/inputs');
+const {
+  isValidPatch: isValidNotificationSettingsPatch,
+  merge: mergeNotificationSettings,
+} = require('../../../utils/notification-settings');
 
 const Errors = {
   NOT_ENOUGH_RIGHTS: {
@@ -212,6 +220,11 @@ module.exports = {
     isDeactivated: {
       type: 'boolean',
     },
+    // SPECIAL1: partial patch, merged into the current settings (only for oneself)
+    notificationSettings: {
+      type: 'json',
+      custom: isValidNotificationSettingsPatch,
+    },
   },
 
   exits: {
@@ -279,6 +292,13 @@ module.exports = {
         'isDeactivated',
       ]),
     };
+
+    if (inputs.notificationSettings) {
+      values.notificationSettings = mergeNotificationSettings(
+        user.notificationSettings,
+        inputs.notificationSettings,
+      );
+    }
 
     user = await sails.helpers.users.updateOne
       .with({
