@@ -53,6 +53,7 @@ const ProjectContent = React.memo(() => {
 
   const card = useSelector(selectors.selectCurrentCard);
   const board = useSelector(selectors.selectCurrentBoard);
+  const project = useSelector(selectors.selectCurrentProject);
   const boardMemberships = useSelector(selectors.selectMembershipsForCurrentBoard);
   const userIds = useSelector(selectors.selectUserIdsForCurrentCard);
   const labelIds = useSelector(selectors.selectLabelIdsForCurrentCard);
@@ -197,6 +198,10 @@ const ProjectContent = React.memo(() => {
     },
     [dispatch],
   );
+
+  const handleClosedToggle = useCallback(() => {
+    dispatch(entryActions.toggleCardClosed(card.id, !card.isClosed));
+  }, [card.id, card.isClosed, dispatch]);
 
   const handleNameUpdate = useCallback(
     (name) => {
@@ -355,13 +360,28 @@ const ProjectContent = React.memo(() => {
       <Grid.Row className={styles.headerPadding}>
         <Grid.Column width={16} className={styles.headerPadding}>
           <div className={styles.headerWrapper}>
-            <Icon name={CardTypeIcons[CardTypes.PROJECT]} className={styles.moduleIcon} />
+            {/* SPECIAL1: done checkbox in place of the card type icon (active lists, editors) */}
+            {list.type === ListTypes.ACTIVE && canEditName ? (
+              <Checkbox
+                checked={card.isClosed}
+                className={styles.headerCheckbox}
+                aria-label={card.isClosed ? t('common.markAsNotDone') : t('common.markAsDone')}
+                onChange={handleClosedToggle}
+              />
+            ) : (
+              <Icon name={CardTypeIcons[CardTypes.PROJECT]} className={styles.moduleIcon} />
+            )}
             <div className={styles.headerTitleWrapper}>
               {canEditName ? (
                 <NameField defaultValue={card.name} onUpdate={handleNameUpdate} />
               ) : (
                 <div className={styles.headerTitle}>{card.name}</div>
               )}
+            </div>
+            <div className={styles.headerPath}>
+              {project && `${project.name} / `}
+              {board && `${board.name} / `}
+              <span className={styles.headerPathList}>{list.name}</span>
             </div>
           </div>
         </Grid.Column>

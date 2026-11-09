@@ -62,6 +62,33 @@
   }
 
   /* SPECIAL1 */
+  .breadcrumbs {
+    align-items: center;
+    display: flex;
+    font-size: 15px;
+    gap: 10px;
+    padding: 0 8px;
+  }
+
+  .breadcrumbCurrent {
+    color: #fff;
+    font-weight: 600;
+  }
+
+  .breadcrumbLink,
+  .breadcrumbSection {
+    color: #c6cdf3;
+  }
+
+  .breadcrumbLink:hover {
+    color: #fff;
+    text-decoration: underline;
+  }
+
+  .breadcrumbSeparator {
+    color: #7f8cb8;
+  }
+
   .logoImage {
     display: block;
     height: 28px;

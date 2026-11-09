@@ -328,3 +328,116 @@
     margin: 0;
   }
 }
+
+/* SPECIAL1: card window variant 1 – navy header band, white content, light action sidebar */
+:global(#app) {
+  .wrapper {
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .headerPadding {
+    background: #182f66;
+  }
+
+  .headerWrapper {
+    margin: 20px 56px 18px 64px;
+  }
+
+  .headerCheckbox {
+    left: -40px;
+    position: absolute;
+    top: 12px;
+
+    :global(label)::before {
+      background: transparent !important;
+      border: 2px solid #c6cdf3 !important;
+      border-radius: 6px !important;
+      height: 22px !important;
+      width: 22px !important;
+    }
+
+    &:global(.checked) :global(label)::before {
+      background: #fff !important;
+      border-color: #fff !important;
+    }
+
+    &:global(.checked) :global(label)::after {
+      color: #182f66 !important;
+      font-size: 15px !important;
+      height: 22px !important;
+      line-height: 22px !important;
+      width: 22px !important;
+    }
+  }
+
+  .moduleIcon {
+    color: #182f66;
+  }
+
+  .headerWrapper .moduleIcon {
+    color: #c6cdf3;
+  }
+
+  .headerTitle,
+  .headerWrapper :global(textarea) {
+    color: #fff;
+    font-family: "Source Sans 3", "Inter", sans-serif !important;
+    font-size: 26px !important;
+    font-weight: 700;
+    line-height: 32px !important;
+  }
+
+  .headerWrapper :global(textarea):focus {
+    background: #fff;
+    color: #0d0d0d;
+  }
+
+  .headerPath {
+    color: #c6cdf3;
+    font-size: 13px;
+    margin-top: 6px;
+  }
+
+  .headerPathList {
+    color: #fff;
+    font-weight: 600;
+  }
+
+  .moduleHeader {
+    color: #182f66;
+    font-family: "Source Sans 3", "Inter", sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .sidebarPadding {
+    background: #f7f8fb;
+    border-left: 1px solid #e3e6ee;
+    padding: 16px 20px !important;
+  }
+
+  .actionsTitle {
+    color: #5b6478;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+  }
+
+  .actionButton {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: inset 0 0 0 1px #d1d5e0;
+    color: #182f66;
+    font-weight: 600;
+
+    &:hover {
+      background: #edf2ff;
+      color: #182f66;
+    }
+  }
+
+  .actionIcon {
+    color: #22428f;
+  }
+}

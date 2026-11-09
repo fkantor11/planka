@@ -16,6 +16,7 @@
 /* SPECIAL1: light workspace (design A), used when the project has no background */
 :global(#app.s1-light) {
   .wrapper {
-    background: #e7e8ed;
+    background: #fff;
+    border-bottom: 1px solid #d1d5e0;
   }
 }

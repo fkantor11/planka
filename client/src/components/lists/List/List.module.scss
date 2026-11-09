@@ -9,7 +9,7 @@
   }
 
   .addCardButton {
-    background: #e7e8ed;
+    background: #fff;
     border: none;
     color: #22428f;
     cursor: pointer;
@@ -23,7 +23,7 @@
     text-align: left;
 
     &:hover {
-      background: #dcdee6;
+      background: #eff0f5;
       color: #182f66;
       fill: #182f66;
     }
@@ -156,6 +156,20 @@
     top: 10px;
   }
 
+  .headerCount {
+    background: #edf2ff;
+    border-radius: 100px;
+    color: #22428f;
+    display: inline-block;
+    font-family: "Inter", sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 18px;
+    margin-left: 8px;
+    padding: 0 8px;
+    vertical-align: 1px;
+  }
+
   .headerName {
     color: #182f66;
     font-family: "Source Sans 3", "Inter", sans-serif;
@@ -181,8 +195,9 @@
   }
 
   .outerWrapper {
-    background: #e7e8ed;
-    border-radius: 12px;
+    background: #fff;
+    border: 1px solid #dde1ea;
+    border-radius: 14px;
     display: flex;
     flex-direction: column;
     max-height: calc(100vh - 198px);

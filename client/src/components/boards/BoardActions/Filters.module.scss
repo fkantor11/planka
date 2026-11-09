@@ -94,8 +94,11 @@
 :global(#app.s1-light) {
   .filterLabel {
     background: #fff;
+    border-radius: 100px;
     box-shadow: inset 0 0 0 1px #d1d5e0;
     color: #182f66;
+    padding-left: 10px;
+    padding-right: 10px;
 
     &:hover {
       background: #e7e8ed;
@@ -111,6 +114,7 @@
 
     input {
       background: #fff;
+      border-radius: 100px !important;
       box-shadow: inset 0 0 0 1px #d1d5e0;
       color: #0d0d0d !important;
 

@@ -8,7 +8,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'semantic-ui-react';
-import { Tooltip } from '../../../lib/custom-ui';
 import { closePopup, usePopup } from '../../../lib/popup';
 
 import selectors from '../../../selectors';
@@ -72,15 +71,14 @@ const Boards = React.memo(() => {
             {({ innerRef, droppableProps, placeholder }) => (
               // eslint-disable-next-line react/jsx-props-no-spreading
               <div {...droppableProps} ref={innerRef} className={styles.tabs}>
+                <span className={styles.label}>{t('common.boards')}</span>
                 {boardIds.map((boardId, index) => (
                   <Item key={boardId} id={boardId} index={index} />
                 ))}
                 {placeholder}
                 {canAdd && (
                   <AddBoardPopup>
-                    <Tooltip content={t('action.createBoard')}>
-                      <Button icon="plus" className={styles.addButton} />
-                    </Tooltip>
+                    <Button className={styles.addButton}>+ {t('action.newBoard')}</Button>
                   </AddBoardPopup>
                 )}
               </div>

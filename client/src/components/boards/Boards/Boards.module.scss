@@ -61,17 +61,41 @@
   }
 }
 
-/* SPECIAL1: light workspace (design A), used when the project has no background */
+/* SPECIAL1: light workspace (design A, board variant 1) */
 :global(#app.s1-light) {
   .addButton {
-    color: #182f66;
+    background: transparent;
+    border: 1px dashed #a3acc2;
+    border-radius: 100px;
+    color: #22428f;
+    font-weight: 600;
+    margin: 2px 0 0 4px;
+    padding: 7px 16px;
 
     &:hover {
-      background: rgba(24, 47, 102, 0.08);
+      background: rgba(24, 47, 102, 0.06);
     }
   }
 
+  .label {
+    align-self: center;
+    color: #5b6478;
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    margin: 2px 10px 0 0;
+    text-transform: uppercase;
+  }
+
   .wrapper {
-    border-bottom-color: #d1d5e0;
+    border-bottom: none;
+  }
+}
+
+/* Outside the light workspace the label is not shown */
+:global(#app:not(.s1-light)) {
+  .label {
+    display: none;
   }
 }

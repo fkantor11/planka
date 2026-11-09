@@ -395,6 +395,8 @@ const List = React.memo(({ id, index }) => {
                     />
                   )}
                   {list.name}
+                  {/* SPECIAL1: number of tasks next to the list name */}
+                  <span className={styles.headerCount}>{cardIds.length}</span>
                 </div>
               )}
               {list.type !== ListTypes.ACTIVE && (

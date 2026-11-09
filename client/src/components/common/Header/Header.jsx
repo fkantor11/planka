@@ -30,6 +30,12 @@ const POPUP_PROPS = {
 const Header = React.memo(() => {
   const user = useSelector(selectors.selectCurrentUser);
   const project = useSelector(selectors.selectCurrentProject);
+
+  const projectSection = useSelector((state) =>
+    project && project.projectSectionId
+      ? selectors.selectProjectSectionById(state, project.projectSectionId)
+      : null,
+  );
   const notificationIds = useSelector(selectors.selectNotificationIdsForCurrentUser);
   const isFavoritesEnabled = useSelector(selectors.selectIsFavoritesEnabled);
 
@@ -69,25 +75,29 @@ const Header = React.memo(() => {
 
   return (
     <div className={styles.wrapper}>
-      {!project && (
-        <Link to={Paths.ROOT} className={classNames(styles.logo, styles.title)}>
-          <img src={logo} alt="SPECIAL1" className={styles.logoImage} />
-        </Link>
-      )}
+      <Link to={Paths.ROOT} className={classNames(styles.logo, styles.title)}>
+        <img src={logo} alt="SPECIAL1" className={styles.logoImage} />
+      </Link>
       <Menu inverted size="large" className={styles.menu}>
         {project && (
           <Menu.Menu position="left">
-            <Tooltip content={t('action.returnToProjects')}>
-              <Menu.Item
-                as={Link}
-                to={Paths.ROOT}
-                className={classNames(styles.item, styles.itemHoverable)}
-              >
-                <Icon fitted name="arrow left" />
-              </Menu.Item>
-            </Tooltip>
-            <Menu.Item className={classNames(styles.item, styles.title)}>
-              {project.name}
+            {/* SPECIAL1: breadcrumb navigation Projects / section / project */}
+            <nav aria-label={t('common.breadcrumbs')} className={styles.breadcrumbs}>
+              <Link to={Paths.ROOT} className={styles.breadcrumbLink}>
+                {t('common.projects')}
+              </Link>
+              {projectSection && (
+                <>
+                  <span className={styles.breadcrumbSeparator} aria-hidden="true">
+                    /
+                  </span>
+                  <span className={styles.breadcrumbSection}>{projectSection.name}</span>
+                </>
+              )}
+              <span className={styles.breadcrumbSeparator} aria-hidden="true">
+                /
+              </span>
+              <span className={styles.breadcrumbCurrent}>{project.name}</span>
               {canEditProject && (
                 <Tooltip content={t('common.openProjectSettings')}>
                   <Button className={styles.editButton} onClick={handleProjectSettingsClick}>
@@ -95,7 +105,7 @@ const Header = React.memo(() => {
                   </Button>
                 </Tooltip>
               )}
-            </Menu.Item>
+            </nav>
           </Menu.Menu>
         )}
         <Menu.Menu position="right">

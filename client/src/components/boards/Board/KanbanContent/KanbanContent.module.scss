@@ -61,8 +61,10 @@
 /* SPECIAL1: light workspace (design A), used when the project has no background */
 :global(#app.s1-light) {
   .addListButton {
-    background: transparent;
-    box-shadow: inset 0 0 0 1px #a3acc2;
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px dashed #a3acc2;
+    border-radius: 14px;
+    box-shadow: none;
     color: #22428f;
     fill: #22428f;
 

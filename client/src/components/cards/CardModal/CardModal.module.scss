@@ -62,3 +62,19 @@
     }
   }
 }
+
+/* SPECIAL1: the close icon sits on the navy header band of project cards */
+:global(#app) {
+  .wrapper:not(.wrapperStory) > :global(.close.icon) {
+    color: #fff !important;
+    opacity: 0.85;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  .wrapper {
+    border-radius: 16px !important;
+  }
+}
