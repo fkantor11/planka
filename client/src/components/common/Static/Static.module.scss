@@ -87,4 +87,21 @@
     color: #22428f;
     fill: #22428f;
   }
+
+  /* the board bar is 6px taller here (pills with even spacing), so content starts 6px lower */
+  .wrapperBoard {
+    margin-top: calc(180px + var(--promo-banner-height, 0px));
+  }
+
+  .wrapperBoardWithFavorites {
+    margin-top: calc(270px + var(--promo-banner-height, 0px));
+  }
+
+  .wrapperProject {
+    margin-top: calc(104px + var(--promo-banner-height, 0px));
+  }
+
+  .wrapperProjectWithFavorites {
+    margin-top: calc(194px + var(--promo-banner-height, 0px));
+  }
 }
