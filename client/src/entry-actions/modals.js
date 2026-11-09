@@ -44,6 +44,14 @@ const openAddProjectModal = (defaultProjectType) => ({
   },
 });
 
+// SPECIAL1
+const openProjectSectionsModal = () => ({
+  type: EntryActionTypes.MODAL_OPEN,
+  payload: {
+    type: ModalTypes.PROJECT_SECTIONS,
+  },
+});
+
 const openProjectSettingsModal = () => ({
   type: EntryActionTypes.MODAL_OPEN,
   payload: {
@@ -79,6 +87,7 @@ export default {
   openAboutModal,
   openUserSettingsModal,
   openAddProjectModal,
+  openProjectSectionsModal,
   openProjectSettingsModal,
   openBoardSettingsModal,
   openBoardActivitiesModal,

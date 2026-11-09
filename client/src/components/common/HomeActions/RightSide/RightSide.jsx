@@ -13,7 +13,7 @@ import { usePopup } from '../../../../lib/popup';
 
 import selectors from '../../../../selectors';
 import entryActions from '../../../../entry-actions';
-import { HomeViews } from '../../../../constants/Enums';
+import { HomeViews, UserRoles } from '../../../../constants/Enums';
 import { HomeViewIcons, ProjectOrderIcons } from '../../../../constants/Icons';
 import SelectOrderStep from './SelectOrderStep';
 
@@ -28,6 +28,11 @@ const RightSide = React.memo(() => {
   const currentView = useSelector(selectors.selectHomeView); // TODO: rename?
   const currentOrder = useSelector(selectors.selectProjectsOrder); // TODO: rename?
   const isHiddenVisible = useSelector(selectors.selectIsHiddenProjectsVisible);
+
+  // SPECIAL1: only admins manage the company-wide sections
+  const isAdmin = useSelector(
+    (state) => selectors.selectCurrentUser(state).role === UserRoles.ADMIN,
+  );
 
   const dispatch = useDispatch();
   const [t] = useTranslation();
@@ -50,10 +55,23 @@ const RightSide = React.memo(() => {
     dispatch(entryActions.toggleHiddenProjects(!isHiddenVisible));
   }, [isHiddenVisible, dispatch]);
 
+  const handleManageSectionsClick = useCallback(() => {
+    dispatch(entryActions.openProjectSectionsModal());
+  }, [dispatch]);
+
   const SelectOrderPopup = usePopup(SelectOrderStep);
 
   return (
     <>
+      {isAdmin && (
+        <div className={styles.action}>
+          <Tooltip content={t('action.manageSections')}>
+            <button type="button" className={styles.button} onClick={handleManageSectionsClick}>
+              <Icon fitted name="folder open outline" />
+            </button>
+          </Tooltip>
+        </div>
+      )}
       <div className={styles.action}>
         <Tooltip
           content={t(isHiddenVisible ? 'action.hideHiddenProjects' : 'common.showHiddenProjects')}

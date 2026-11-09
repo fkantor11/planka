@@ -68,12 +68,11 @@
  *           default: false
  *           description: Whether the project is hidden
  *           example: false
- *         section:
+ *         projectSectionId:
  *           type: string
- *           enum: [sales, delivery, finance, marketing, everyone]
  *           nullable: true
- *           description: Company-wide section the project is shown in (SPECIAL1)
- *           example: sales
+ *           description: ID of the company-wide section the project is shown in (SPECIAL1)
+ *           example: "1357158568008091267"
  *         position:
  *           type: number
  *           nullable: true
@@ -96,15 +95,6 @@
 const Types = {
   PRIVATE: 'private',
   SHARED: 'shared',
-};
-
-// SPECIAL1: company-wide sections the home page groups projects into
-const Sections = {
-  SALES: 'sales',
-  DELIVERY: 'delivery',
-  FINANCE: 'finance',
-  MARKETING: 'marketing',
-  EVERYONE: 'everyone',
 };
 
 const BackgroundTypes = {
@@ -142,7 +132,6 @@ const BACKGROUND_GRADIENTS = [
 
 module.exports = {
   Types,
-  Sections,
   BackgroundTypes,
   BACKGROUND_GRADIENTS,
 
@@ -177,11 +166,6 @@ module.exports = {
       defaultsTo: false, // TODO: implement via normalizeValues?
       columnName: 'is_hidden',
     },
-    section: {
-      type: 'string',
-      isIn: Object.values(Sections),
-      allowNull: true,
-    },
     position: {
       type: 'number',
       allowNull: true,
@@ -202,6 +186,11 @@ module.exports = {
     backgroundImageId: {
       model: 'BackgroundImage',
       columnName: 'background_image_id',
+    },
+    // SPECIAL1
+    projectSectionId: {
+      model: 'ProjectSection',
+      columnName: 'project_section_id',
     },
     managerUsers: {
       collection: 'User',

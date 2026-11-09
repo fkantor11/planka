@@ -68,12 +68,11 @@
  *                 type: boolean
  *                 description: Whether the project is marked as favorite by the current user
  *                 example: true
- *               section:
+ *               projectSectionId:
  *                 type: string
- *                 enum: [sales, delivery, finance, marketing, everyone]
  *                 nullable: true
- *                 description: Company-wide section of the project (admins only)
- *                 example: sales
+ *                 description: ID of the company-wide section of the project (admins only)
+ *                 example: "1357158568008091267"
  *               position:
  *                 type: number
  *                 nullable: true
@@ -119,6 +118,9 @@ const Errors = {
   },
   BACKGROUND_IMAGE_NOT_FOUND: {
     backgroundImageNotFound: 'Background image not found',
+  },
+  PROJECT_SECTION_NOT_FOUND: {
+    projectSectionNotFound: 'Project section not found',
   },
   PROJECT_ALREADY_HAS_OWNER_PROJECT_MANAGER: {
     projectAlreadyHasOwnerProjectManager: 'Project already has owner project manager',
@@ -175,9 +177,8 @@ module.exports = {
     isFavorite: {
       type: 'boolean',
     },
-    section: {
-      type: 'string',
-      isIn: Object.values(Project.Sections),
+    projectSectionId: {
+      ...idInput,
       allowNull: true,
     },
     position: {
@@ -198,6 +199,9 @@ module.exports = {
       responseType: 'notFound',
     },
     backgroundImageNotFound: {
+      responseType: 'notFound',
+    },
+    projectSectionNotFound: {
       responseType: 'notFound',
     },
     projectAlreadyHasOwnerProjectManager: {
@@ -245,7 +249,7 @@ module.exports = {
 
     // SPECIAL1: sections and their order are shared by everyone, so only admins arrange them
     if (currentUser.role === User.Roles.ADMIN) {
-      availableInputKeys.push('section', 'position');
+      availableInputKeys.push('projectSectionId', 'position');
     }
 
     if (projectManager) {
@@ -288,6 +292,14 @@ module.exports = {
       delete inputs.backgroundImageId; // eslint-disable-line no-param-reassign
     }
 
+    if (inputs.projectSectionId) {
+      const projectSection = await ProjectSection.qm.getOneById(inputs.projectSectionId);
+
+      if (!projectSection) {
+        throw Errors.PROJECT_SECTION_NOT_FOUND;
+      }
+    }
+
     if (!_.isUndefined(inputs.isFavorite)) {
       if (currentUser.role !== User.Roles.ADMIN || project.ownerProjectManagerId) {
         if (!projectManager) {
@@ -313,7 +325,7 @@ module.exports = {
       'backgroundGradient',
       'isHidden',
       'isFavorite',
-      'section',
+      'projectSectionId',
       'position',
     ]);
 

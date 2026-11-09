@@ -42,6 +42,7 @@ export function* fetchCore() {
       boardMemberships: boardMemberships1,
       customFields: customFields1,
       notificationServices: notificationServices2,
+      projectSections,
     },
   } = yield call(request, api.getProjects);
 
@@ -126,6 +127,7 @@ export function* fetchCore() {
     customFieldGroups,
     customFieldValues,
     notifications,
+    projectSections,
     users: mergeRecords(users1, users2, users3, users4),
     projects: mergeRecords(projects1, projects2),
     boardMemberships: mergeRecords(boardMemberships1, boardMemberships2),

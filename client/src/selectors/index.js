@@ -12,6 +12,7 @@ import webhooks from './webhooks';
 import users from './users';
 import projects from './projects';
 import projectManagers from './project-managers';
+import projectSections from './project-sections';
 import backgroundImages from './background-images';
 import baseCustomFieldGroups from './base-custom-field-groups';
 import boards from './boards';
@@ -40,6 +41,7 @@ export default {
   ...users,
   ...projects,
   ...projectManagers,
+  ...projectSections,
   ...backgroundImages,
   ...baseCustomFieldGroups,
   ...boards,

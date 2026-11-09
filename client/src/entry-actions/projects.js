@@ -48,11 +48,11 @@ const updateProject = (id, data) => ({
   },
 });
 
-const moveProjectToSection = (id, section, index) => ({
+const moveProjectToSection = (id, sectionId, index) => ({
   type: EntryActionTypes.PROJECT_MOVE_TO_SECTION,
   payload: {
     id,
-    section,
+    sectionId,
     index,
   },
 });

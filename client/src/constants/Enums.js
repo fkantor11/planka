@@ -46,14 +46,9 @@ export const ProjectGroups = {
   OTHERS: 'others',
 };
 
-// SPECIAL1: company-wide sections of the home page, in display order; projects without a section
-// are shown under UNSORTED at the end
+// SPECIAL1: the company-wide sections of the home page are records (ProjectSection); projects
+// without a known section are shown in this virtual group at the end
 export const ProjectSections = {
-  SALES: 'sales',
-  DELIVERY: 'delivery',
-  FINANCE: 'finance',
-  MARKETING: 'marketing',
-  EVERYONE: 'everyone',
   UNSORTED: 'unsorted',
 };
 

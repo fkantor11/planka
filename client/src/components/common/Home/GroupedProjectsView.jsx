@@ -9,23 +9,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import selectors from '../../../selectors';
 import entryActions from '../../../entry-actions';
 import { isUserAdminOrProjectOwner } from '../../../utils/record-helpers';
-import { ProjectOrders, ProjectSections, ProjectTypes, UserRoles } from '../../../constants/Enums';
-import { ProjectSectionIcons } from '../../../constants/Icons';
+import { ProjectOrders, ProjectTypes, UserRoles } from '../../../constants/Enums';
 import Projects from './Projects';
 
-// SPECIAL1: the grouped home view shows company-wide sections instead of ownership groups.
-// Admins arrange projects by dragging them within and between sections.
-const SECTIONS = [
-  ProjectSections.SALES,
-  ProjectSections.DELIVERY,
-  ProjectSections.FINANCE,
-  ProjectSections.MARKETING,
-  ProjectSections.EVERYONE,
-  ProjectSections.UNSORTED,
-];
-
+// SPECIAL1: the grouped home view shows the company-wide sections (managed by admins) instead of
+// ownership groups, followed by the unsorted projects. Admins arrange projects by dragging them
+// within and between sections.
 const GroupedProjectsView = React.memo(() => {
-  const projectIdsBySection = useSelector(selectors.selectProjectIdsBySectionForCurrentUser);
+  const groups = useSelector(selectors.selectProjectIdsBySectionForCurrentUser);
   const projectsSearch = useSelector(selectors.selectProjectsSearch);
   const projectsOrder = useSelector(selectors.selectProjectsOrder);
 
@@ -47,36 +38,34 @@ const GroupedProjectsView = React.memo(() => {
   }, [dispatch]);
 
   const handleMove = useCallback(
-    (id, section, index) => {
-      dispatch(entryActions.moveProjectToSection(id, section, index));
+    (id, sectionId, index) => {
+      dispatch(entryActions.moveProjectToSection(id, sectionId, index));
     },
     [dispatch],
   );
 
-  if (!projectIdsBySection) {
+  if (!groups) {
     return null;
   }
 
   return (
     <>
-      {SECTIONS.map((section) => {
-        const ids = projectIdsBySection[section];
-        const isUnsorted = section === ProjectSections.UNSORTED;
-
-        if (ids.length === 0 && !canArrange && !(isUnsorted && canAdd)) {
+      {groups.map((group) => {
+        if (group.projectIds.length === 0 && !canArrange && !(group.isUnsorted && canAdd)) {
           return null;
         }
 
         return (
           <Projects
-            key={section}
-            ids={ids}
-            title={`common.projectSection_${section}`}
-            titleIcon={ProjectSectionIcons[section]}
-            section={section}
+            key={group.id}
+            ids={group.projectIds}
+            title={group.isUnsorted ? 'common.projectSection_unsorted' : undefined}
+            titleText={group.isUnsorted ? undefined : group.name}
+            titleIcon={group.isUnsorted ? 'inbox' : 'folder outline'}
+            section={group.id}
             isSortable={canArrange}
             onMove={handleMove}
-            onAdd={isUnsorted ? handleAdd : undefined}
+            onAdd={group.isUnsorted ? handleAdd : undefined}
           />
         );
       })}

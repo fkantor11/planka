@@ -13,7 +13,7 @@ import selectors from '../../../selectors';
 import actions from '../../../actions';
 import api from '../../../api';
 import mergeRecords from '../../../utils/merge-records';
-import { ProjectSections, UserRoles } from '../../../constants/Enums';
+import { UserRoles } from '../../../constants/Enums';
 import Config from '../../../constants/Config';
 
 export function* searchProjects(value) {
@@ -122,20 +122,27 @@ export function* updateProject(id, data) {
   yield put(actions.updateProject.success(project));
 }
 
-// SPECIAL1: places a project at `index` in a section and renumbers that section, so the order is
-// stored even for projects that never had a position (only changed projects are sent)
-export function* moveProjectToSection(id, section, index) {
-  const projectIdsBySection = yield select(selectors.selectProjectIdsBySectionForCurrentUser, true);
+// SPECIAL1: places a project at `index` in a section (a section id, or the unsorted group) and
+// renumbers that section, so the order is stored even for projects that never had a position (only
+// changed projects are sent)
+export function* moveProjectToSection(id, sectionId, index) {
+  const groups = yield select(selectors.selectProjectIdsBySectionForCurrentUser, true);
   const project = yield select(selectors.selectProjectById, id);
 
-  if (!projectIdsBySection || !project) {
+  if (!groups || !project) {
     return;
   }
 
-  const ids = (projectIdsBySection[section] || []).filter((projectId) => projectId !== id);
+  const group = groups.find((item) => item.id === sectionId);
+
+  if (!group) {
+    return;
+  }
+
+  const ids = group.projectIds.filter((projectId) => projectId !== id);
   ids.splice(Math.min(Math.max(index, 0), ids.length), 0, id);
 
-  const nextSection = section === ProjectSections.UNSORTED ? null : section;
+  const nextProjectSectionId = group.isUnsorted ? null : group.id;
 
   for (let i = 0; i < ids.length; i += 1) {
     const projectId = ids[i];
@@ -147,8 +154,8 @@ export function* moveProjectToSection(id, section, index) {
     if (projectToUpdate.position !== position) {
       data.position = position;
     }
-    if (projectId === id && (projectToUpdate.section || null) !== nextSection) {
-      data.section = nextSection;
+    if (projectId === id && (projectToUpdate.projectSectionId || null) !== nextProjectSectionId) {
+      data.projectSectionId = nextProjectSectionId;
     }
 
     if (Object.keys(data).length > 0) {

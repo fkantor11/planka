@@ -22,6 +22,7 @@ import AutoLogoutWarningModal from '../AutoLogoutWarningModal';
 import UserSettingsModal from '../../users/UserSettingsModal';
 import ProjectBackground from '../../projects/ProjectBackground';
 import AddProjectModal from '../../projects/AddProjectModal';
+import ProjectSectionsModal from '../../projects/ProjectSectionsModal';
 
 const Core = React.memo(() => {
   const isInitializing = useSelector(selectors.selectIsInitializing);
@@ -90,6 +91,10 @@ const Core = React.memo(() => {
         break;
       case ModalTypes.ADD_PROJECT:
         modalNode = <AddProjectModal />;
+
+        break;
+      case ModalTypes.PROJECT_SECTIONS:
+        modalNode = <ProjectSectionsModal />;
 
         break;
       default:

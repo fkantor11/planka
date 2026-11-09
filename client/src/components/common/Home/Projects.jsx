@@ -32,7 +32,7 @@ const readDragData = (event) => {
 const isProjectDrag = (event) => event.dataTransfer.types.includes(DRAG_DATA_TYPE);
 
 const Projects = React.memo(
-  ({ ids, title, titleIcon, withTypeIndicator, section, isSortable, onMove, onAdd }) => {
+  ({ ids, title, titleText, titleIcon, withTypeIndicator, section, isSortable, onMove, onAdd }) => {
     const canAdd = useSelector((state) => {
       const user = selectors.selectCurrentUser(state);
       return isUserAdminOrProjectOwner(user);
@@ -40,11 +40,20 @@ const Projects = React.memo(
 
     const [t] = useTranslation();
     const [dropIndex, setDropIndex] = useState(null);
+    const [draggingId, setDraggingId] = useState(null);
 
     const handleDragStart = useCallback(
       (event, id, index) => {
         event.dataTransfer.effectAllowed = 'move'; // eslint-disable-line no-param-reassign
         event.dataTransfer.setData(DRAG_DATA_TYPE, JSON.stringify({ id, section, index }));
+
+        // Show the whole tile under the cursor while dragging, not a link
+        const tile = event.currentTarget.firstElementChild || event.currentTarget;
+        const rect = tile.getBoundingClientRect();
+        event.dataTransfer.setDragImage(tile, event.clientX - rect.left, event.clientY - rect.top);
+
+        // Dim the original tile once the drag image has been taken
+        setTimeout(() => setDraggingId(id));
       },
       [section],
     );
@@ -108,6 +117,7 @@ const Projects = React.memo(
 
     const handleDragEnd = useCallback(() => {
       setDropIndex(null);
+      setDraggingId(null);
     }, []);
 
     const sortableProps = isSortable
@@ -122,18 +132,19 @@ const Projects = React.memo(
       <div
         className={classNames(
           styles.wrapper,
-          !title && styles.wrapperWithoutTitle,
+          !title && !titleText && styles.wrapperWithoutTitle,
           isSortable && styles.wrapperSortable,
           dropIndex !== null && styles.wrapperDropTarget,
         )}
         {...sortableProps} // eslint-disable-line react/jsx-props-no-spreading
       >
-        {title && (
+        {(title || titleText) && (
           <div className={styles.title}>
             {titleIcon && <Icon name={titleIcon} className={styles.titleIcon} />}
-            {t(title, {
-              context: 'title',
-            })}
+            {titleText ||
+              t(title, {
+                context: 'title',
+              })}
           </div>
         )}
         <Grid>
@@ -143,6 +154,7 @@ const Projects = React.memo(
               className={classNames(
                 styles.column,
                 isSortable && styles.columnDraggable,
+                draggingId === id && styles.columnDragging,
                 dropIndex === index && styles.columnDropBefore,
                 dropIndex === index + 1 && index === ids.length - 1 && styles.columnDropAfter,
               )}
@@ -193,6 +205,7 @@ const Projects = React.memo(
 Projects.propTypes = {
   ids: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
   title: PropTypes.string,
+  titleText: PropTypes.string, // SPECIAL1: shown as is, e.g. a section name
   titleIcon: PropTypes.string,
   withTypeIndicator: PropTypes.bool, // TODO: use plural form?
   section: PropTypes.string,
@@ -203,6 +216,7 @@ Projects.propTypes = {
 
 Projects.defaultProps = {
   title: undefined,
+  titleText: undefined,
   titleIcon: undefined,
   withTypeIndicator: false,
   section: undefined,

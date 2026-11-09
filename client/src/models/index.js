@@ -7,6 +7,7 @@ import Webhook from './Webhook';
 import User from './User';
 import Project from './Project';
 import ProjectManager from './ProjectManager';
+import ProjectSection from './ProjectSection';
 import BackgroundImage from './BackgroundImage';
 import BaseCustomFieldGroup from './BaseCustomFieldGroup';
 import Board from './Board';
@@ -30,6 +31,7 @@ export {
   User,
   Project,
   ProjectManager,
+  ProjectSection,
   BackgroundImage,
   BaseCustomFieldGroup,
   Board,

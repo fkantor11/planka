@@ -73,6 +73,19 @@ const createSocketEventsChannel = () =>
       emit(entryActions.handleProjectDelete(item));
     };
 
+    // SPECIAL1
+    const handleProjectSectionCreate = ({ item }) => {
+      emit(entryActions.handleProjectSectionCreate(item));
+    };
+
+    const handleProjectSectionUpdate = ({ item }) => {
+      emit(entryActions.handleProjectSectionUpdate(item));
+    };
+
+    const handleProjectSectionDelete = ({ item }) => {
+      emit(entryActions.handleProjectSectionDelete(item));
+    };
+
     const handleProjectManagerCreate = ({ item, included: { users } }) => {
       emit(entryActions.handleProjectManagerCreate(item, users));
     };
@@ -315,6 +328,10 @@ const createSocketEventsChannel = () =>
     socket.on('projectUpdate', handleProjectUpdate);
     socket.on('projectDelete', handleProjectDelete);
 
+    socket.on('projectSectionCreate', handleProjectSectionCreate);
+    socket.on('projectSectionUpdate', handleProjectSectionUpdate);
+    socket.on('projectSectionDelete', handleProjectSectionDelete);
+
     socket.on('projectManagerCreate', handleProjectManagerCreate);
     socket.on('projectManagerDelete', handleProjectManagerDelete);
 
@@ -411,6 +428,10 @@ const createSocketEventsChannel = () =>
       socket.off('projectCreate', handleProjectCreate);
       socket.off('projectUpdate', handleProjectUpdate);
       socket.off('projectDelete', handleProjectDelete);
+
+      socket.off('projectSectionCreate', handleProjectSectionCreate);
+      socket.off('projectSectionUpdate', handleProjectSectionUpdate);
+      socket.off('projectSectionDelete', handleProjectSectionDelete);
 
       socket.off('projectManagerCreate', handleProjectManagerCreate);
       socket.off('projectManagerDelete', handleProjectManagerDelete);

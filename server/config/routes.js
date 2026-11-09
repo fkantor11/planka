@@ -207,6 +207,11 @@ module.exports.routes = {
   'PATCH /api/projects/:id': 'projects/update',
   'DELETE /api/projects/:id': 'projects/delete',
 
+  // SPECIAL1
+  'POST /api/project-sections': 'project-sections/create',
+  'PATCH /api/project-sections/:id': 'project-sections/update',
+  'DELETE /api/project-sections/:id': 'project-sections/delete',
+
   'POST /api/projects/:projectId/project-managers': 'project-managers/create',
   'DELETE /api/project-managers/:id': 'project-managers/delete',
 

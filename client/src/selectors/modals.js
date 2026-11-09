@@ -25,6 +25,7 @@ export const isCurrentModalAvailableForCurrentUser = createSelector(
 
       switch (currentModal.type) {
         case ModalTypes.ADMINISTRATION:
+        case ModalTypes.PROJECT_SECTIONS:
           return currentUserModel.role === UserRoles.ADMIN;
         case ModalTypes.ADD_PROJECT:
           return isUserAdminOrProjectOwner(currentUserModel);

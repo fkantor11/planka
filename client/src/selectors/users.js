@@ -172,9 +172,11 @@ export const selectFilteredProjctIdsByGroupForCurrentUser = createSelector(
   },
 );
 
-// SPECIAL1: project ids grouped by company-wide section. By default a section keeps the order an
-// admin arranged (projects never arranged come last, oldest first); the other orders still apply.
-// With `isSearchIgnored` the search filter is skipped (used when renumbering a section).
+// SPECIAL1: project ids grouped by company-wide section, as a list of groups in section order
+// followed by the virtual unsorted group (projects with no or an unknown section). By default a
+// section keeps the order an admin arranged (projects never arranged come last, oldest first); the
+// other orders still apply. With `isSearchIgnored` the search filter is skipped (used when
+// renumbering a section).
 const ORDER_BY_ARGS_BY_SECTION_POSITION = [
   [
     (projectModel) =>
@@ -191,7 +193,7 @@ export const selectProjectIdsBySectionForCurrentUser = createSelector(
   (state, isSearchIgnored) => (isSearchIgnored ? '' : selectProjectsSearch(state)),
   (state) => selectIsHiddenProjectsVisible(state),
   (state) => selectProjectsOrder(state),
-  ({ User }, id, projectsSearch, isHiddenProjectsVisible, projectsOrder) => {
+  ({ User, ProjectSection }, id, projectsSearch, isHiddenProjectsVisible, projectsOrder) => {
     if (!id) {
       return id;
     }
@@ -208,23 +210,36 @@ export const selectProjectIdsBySectionForCurrentUser = createSelector(
       ORDER_BY_ARGS_BY_PROJECTS_ORDER[projectsOrder] || ORDER_BY_ARGS_BY_SECTION_POSITION,
     );
 
-    return projectModels.reduce(
-      (result, projectModel) => {
-        const section = result[projectModel.section]
-          ? projectModel.section
-          : ProjectSections.UNSORTED;
+    const groups = ProjectSection.getAllQuerySet()
+      .toRefArray()
+      .map((projectSection) => ({
+        id: projectSection.id,
+        name: projectSection.name,
+        isUnsorted: false,
+        projectIds: [],
+      }));
 
-        result[section].push(projectModel.id);
-        return result;
-      },
-      Object.values(ProjectSections).reduce(
-        (result, section) => ({
-          ...result,
-          [section]: [],
-        }),
-        {},
-      ),
+    const unsortedGroup = {
+      id: ProjectSections.UNSORTED,
+      name: null,
+      isUnsorted: true,
+      projectIds: [],
+    };
+
+    const groupById = groups.reduce(
+      (result, group) => ({
+        ...result,
+        [group.id]: group,
+      }),
+      {},
     );
+
+    projectModels.forEach((projectModel) => {
+      const group = groupById[projectModel.projectSectionId] || unsortedGroup;
+      group.projectIds.push(projectModel.id);
+    });
+
+    return [...groups, unsortedGroup];
   },
 );
 

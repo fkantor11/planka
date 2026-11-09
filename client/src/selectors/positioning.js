@@ -239,8 +239,18 @@ export const selectNextCustomFieldPositionInGroup = createSelector(
   },
 );
 
+// SPECIAL1
+export const selectNextProjectSectionPosition = createSelector(
+  orm,
+  (_, index) => index,
+  (_, __, excludedId) => excludedId,
+  ({ ProjectSection }, index, excludedId) =>
+    nextPosition(ProjectSection.getAllQuerySet().toRefArray(), index, excludedId),
+);
+
 export default {
   selectNextBoardPosition,
+  selectNextProjectSectionPosition,
   selectNextLabelPosition,
   selectNextListPosition,
   selectNextCardPosition,

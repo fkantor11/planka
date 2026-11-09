@@ -126,6 +126,16 @@
   .columnDraggable {
     cursor: grab;
     position: relative;
+
+    /* the tile itself is dragged, not the link or image inside it */
+    a,
+    img {
+      -webkit-user-drag: none;
+    }
+  }
+
+  .columnDragging {
+    opacity: 0.35;
   }
 
   .columnDropBefore::before,

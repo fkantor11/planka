@@ -45,6 +45,7 @@
  *                     - boardMemberships
  *                     - customFields
  *                     - notificationServices
+ *                     - projectSections
  *                   properties:
  *                     users:
  *                       type: array
@@ -86,6 +87,11 @@
  *                       description: Related notification services (for managed projects)
  *                       items:
  *                         $ref: '#/components/schemas/NotificationService'
+ *                     projectSections:
+ *                       type: array
+ *                       description: Company-wide sections the home page groups projects into (SPECIAL1)
+ *                       items:
+ *                         $ref: '#/components/schemas/ProjectSection'
  *       400:
  *         $ref: '#/components/responses/ValidationError'
  *       401:
@@ -185,10 +191,14 @@ module.exports = {
       project.isFavorite = isFavoriteByProjectId[project.id] || false;
     });
 
+    // SPECIAL1: sections are shared by everyone
+    const projectSections = await ProjectSection.qm.getAll();
+
     return {
       items: projects,
       included: {
         projectManagers,
+        projectSections,
         baseCustomFieldGroups,
         boards,
         boardMemberships: availableBoardMemberships,
