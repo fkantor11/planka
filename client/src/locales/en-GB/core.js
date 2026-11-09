@@ -360,6 +360,13 @@ export default {
       proTrialSelfHosted: '✨ Try PLANKA Pro for 30 days on your own server',
       project: 'Project',
       projectNotFound_title: 'Project Not Found',
+      dragProjectHere: 'Drag a project here',
+      projectSection_delivery_title: 'Delivery',
+      projectSection_everyone_title: 'For Everyone',
+      projectSection_finance_title: 'Finance',
+      projectSection_marketing_title: 'Marketing',
+      projectSection_sales_title: 'Sales',
+      projectSection_unsorted_title: 'Unsorted',
       projectOwner: 'Project owner',
       recoveredDraftDescriptionChanged:
         'Recovered draft — description changed since; review before saving',
